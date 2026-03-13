@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesCode AI — Sales Rep Learning Portal</title>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #818CF8;
+    --primary-dark: #3730A3;
+    --ai-purple: #7C3AED;
+    --ai-purple-light: #A78BFA;
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --warning: #F59E0B;
+    --warning-light: #FEF3C7;
+    --danger: #EF4444;
+    --danger-light: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top Header ── */
+  .top-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .top-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .top-header .logo .icon {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .notif-badge {
+    position: relative;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  .notif-badge .dot {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 8px; height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+  }
+  .avatar-sm {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.4);
+  }
+
+  /* ── Main content ── */
+  .main-content {
+    flex: 1;
+    padding-bottom: 80px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── Screen container ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    z-index: 100;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--gray-400);
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .nav-item.active { color: var(--primary); }
+  .nav-item .nav-icon { font-size: 22px; }
+  .nav-item.ai-coach {
+    position: relative;
+  }
+  .nav-item.ai-coach .nav-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 22px;
+    margin-top: -18px;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gray-800);
+  }
+  .card-link {
+    font-size: 13px;
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── Section ── */
+  .section { padding: 16px; }
+  .section-title {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--gray-800);
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  /* ── Badge / Tag ── */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-ai { background: #EDE9FE; color: var(--ai-purple); }
+  .tag-success { background: var(--success-light); color: #065F46; }
+  .tag-warning { background: var(--warning-light); color: #92400E; }
+  .tag-danger { background: var(--danger-light); color: #991B1B; }
+  .tag-primary { background: #EEF2FF; color: var(--primary); }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-ai {
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    color: white;
+  }
+  .btn-outline {
+    background: white;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* ────────────────────────────────────
+     SCREEN 1: HOME DASHBOARD
+  ──────────────────────────────────── */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--primary), var(--ai-purple));
+    color: white;
+    padding: 20px;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: -12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-banner::after {
+    content: '';
+    position: absolute;
+    right: -30px; bottom: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .welcome-banner .greeting { font-size: 14px; opacity: 0.85; }
+  .welcome-banner .name { font-size: 24px; font-weight: 700; margin: 4px 0 12px; }
+  .streak-xp {
+    display: flex;
+    gap: 16px;
+  }
+  .streak-xp .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  .daily-goals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .goal-card {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .goal-card { cursor: pointer; transition: all 0.2s; }
+  .goal-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .goal-card:active { transform: translateY(0); }
+  .goal-card .goal-icon { font-size: 28px; margin-bottom: 6px; }
+  .goal-card .goal-val { font-size: 22px; font-weight: 800; color: var(--gray-800); }
+  .goal-card .goal-label { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+  .goal-card .goal-sub { font-size: 10px; color: var(--success); font-weight: 600; margin-top: 4px; }
+
+  /* ── Quiz Screen ── */
+  .quiz-question-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .quiz-question-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .quiz-question-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+  }
+  .quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .quiz-option:hover { border-color: var(--primary-light); background: var(--gray-50); }
+  .quiz-option.selected { border-color: var(--primary); background: #EEF2FF; }
+  .quiz-option.correct { border-color: var(--success); background: var(--success-light); }
+  .quiz-option.wrong { border-color: var(--danger); background: var(--danger-light); }
+  .quiz-radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .quiz-option.selected .quiz-radio { border-color: var(--primary); background: var(--primary); }
+  .quiz-option.selected .quiz-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; }
+  .quiz-result-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  /* ── Peer Review Screen ── */
+  .review-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    border-left: 4px solid transparent;
+  }
+  .review-card.pending-review { border-left-color: var(--warning); }
+  .review-card.received-review { border-left-color: var(--primary); }
+  .review-stars { display: flex; gap: 2px; margin-top: 6px; }
+  .review-stars .star { font-size: 16px; cursor: pointer; }
+  .review-stars .star.filled { color: #F59E0B; }
+  .review-stars .star.empty { color: var(--gray-300); }
+  .review-comment {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    margin-top: 10px;
+    font-family: inherit;
+  }
+  .review-comment:focus { border-color: var(--primary-light); }
+
+  .ai-suggestion {
+    background: linear-gradient(135deg, #EDE9FE, #EEF2FF);
+    border: 1.5px solid var(--ai-purple-light);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .ai-suggestion:hover { transform: translateY(-1px); }
+  .ai-suggestion .ai-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .ai-suggestion .ai-text { flex: 1; }
+  .ai-suggestion .ai-label { font-size: 11px; color: var(--ai-purple); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .ai-suggestion .ai-msg { font-size: 14px; color: var(--gray-700); margin-top: 4px; line-height: 1.4; }
+
+  .upcoming-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .upcoming-item:last-child { border-bottom: none; }
+  .upcoming-icon {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .upcoming-info { flex: 1; }
+  .upcoming-info .title { font-weight: 600; font-size: 14px; }
+  .upcoming-info .sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .upcoming-time { font-size: 12px; color: var(--gray-500); font-weight: 600; }
+
+  /* ────────────────────────────────────
+     SCREEN 2: LEARNING PATHS
+  ──────────────────────────────────── */
+  .path-header {
+    background: linear-gradient(135deg, var(--primary), #6366F1);
+    color: white;
+    padding: 20px;
+    border-radius: 0 0 24px 24px;
+  }
+  .path-header .path-label { font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .path-header .path-name { font-size: 22px; font-weight: 700; margin: 6px 0; }
+  .path-header .path-meta { display: flex; gap: 16px; font-size: 13px; opacity: 0.85; }
+  .path-progress-bar {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.2);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .path-progress-bar .fill {
+    height: 100%;
+    background: white;
+    border-radius: 4px;
+    width: 35%;
+  }
+  .path-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  .week-section { margin-bottom: 4px; }
+  .week-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 0;
+  }
+  .module-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 4px solid transparent;
+  }
+  .module-card:hover { transform: translateX(2px); }
+  .module-card.completed { border-left-color: var(--success); }
+  .module-card.current { border-left-color: var(--primary); background: #FAFAFE; }
+  .module-card.locked { opacity: 0.6; }
+  .module-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .module-info { flex: 1; }
+  .module-info .mod-title { font-weight: 600; font-size: 14px; }
+  .module-info .mod-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .module-info .mod-progress {
+    margin-top: 6px;
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .module-info .mod-progress .fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .module-status { font-size: 18px; }
+
+  .milestone-card {
+    background: linear-gradient(135deg, var(--warning-light), #FFF7ED);
+    border: 1.5px dashed var(--warning);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .milestone-card .mile-icon { font-size: 28px; }
+  .milestone-card .mile-title { font-weight: 700; font-size: 14px; color: #92400E; margin-top: 4px; }
+  .milestone-card .mile-sub { font-size: 12px; color: #B45309; margin-top: 2px; }
+
+  /* ────────────────────────────────────
+     SCREEN 3: AI COACH
+  ──────────────────────────────────── */
+  .coach-header {
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  .coach-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 10px;
+    border: 3px solid rgba(255,255,255,0.3);
+  }
+  .coach-header .coach-name { font-size: 20px; font-weight: 700; }
+  .coach-header .coach-desc { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+  .scenario-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .scenario-card:hover { border-color: var(--ai-purple-light); transform: translateY(-1px); }
+  .scenario-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .scenario-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .scenario-info { flex: 1; }
+  .scenario-info .sc-title { font-weight: 600; font-size: 14px; }
+  .scenario-info .sc-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .scenario-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .scenario-diff {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .diff-beginner { background: var(--success-light); color: #065F46; }
+  .diff-intermediate { background: var(--warning-light); color: #92400E; }
+  .diff-advanced { background: var(--danger-light); color: #991B1B; }
+
+  .chat-container {
+    display: none;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+  }
+  .chat-container.active { display: flex; }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .chat-bubble.ai {
+    background: #EDE9FE;
+    color: var(--gray-800);
+    border-bottom-left-radius: 4px;
+    margin-right: auto;
+  }
+  .chat-bubble.user {
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+    margin-left: auto;
+  }
+  .chat-bubble .sender {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .chat-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: 10px;
+    background: white;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 24px;
+    border: 1.5px solid var(--gray-200);
+    font-size: 14px;
+    outline: none;
+  }
+  .chat-input:focus { border-color: var(--ai-purple); }
+  .chat-send {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .feedback-card {
+    background: linear-gradient(135deg, #EDE9FE, #DBEAFE);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .feedback-card .fb-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ai-purple);
+    margin-bottom: 10px;
+  }
+  .score-ring {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--success) 0% 78%, var(--gray-200) 78% 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+  }
+  .score-ring-inner {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--success);
+  }
+  .feedback-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .fb-metric {
+    text-align: center;
+    padding: 8px;
+    background: rgba(255,255,255,0.6);
+    border-radius: var(--radius-sm);
+  }
+  .fb-metric .val { font-weight: 800; font-size: 18px; color: var(--gray-800); }
+  .fb-metric .label { font-size: 10px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ────────────────────────────────────
+     SCREEN 4: KNOWLEDGE BASE
+  ──────────────────────────────────── */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    border: 1.5px solid var(--gray-200);
+  }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: var(--gray-700);
+  }
+  .search-bar .search-icon { color: var(--gray-400); font-size: 18px; }
+
+  .kb-category {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .kb-cat-item {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    color: var(--gray-600);
+    border: 1.5px solid var(--gray-200);
+  }
+  .kb-cat-item.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .kb-item {
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .kb-item:hover { box-shadow: var(--shadow-md); }
+  .kb-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .kb-info { flex: 1; }
+  .kb-info .kb-title { font-weight: 600; font-size: 14px; }
+  .kb-info .kb-desc { font-size: 12px; color: var(--gray-500); margin-top: 4px; line-height: 1.4; }
+  .kb-info .kb-meta { display: flex; gap: 12px; margin-top: 6px; }
+  .kb-info .kb-meta span { font-size: 11px; color: var(--gray-400); }
+
+  /* ────────────────────────────────────
+     SCREEN 5: PROGRESS & ACHIEVEMENTS
+  ──────────────────────────────────── */
+  .progress-header {
+    background: linear-gradient(135deg, var(--primary), var(--ai-purple));
+    color: white;
+    padding: 20px;
+    border-radius: 0 0 24px 24px;
+    text-align: center;
+  }
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .xp-bar-container { margin-top: 12px; }
+  .xp-bar {
+    height: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .xp-bar .fill {
+    height: 100%;
+    background: white;
+    border-radius: 5px;
+    width: 65%;
+  }
+  .xp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+
+  .skills-radar {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .radar-chart {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .skill-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .skill-bar-item .skill-name {
+    width: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600);
+    text-align: right;
+  }
+  .skill-bar-item .bar-container {
+    flex: 1;
+    height: 10px;
+    background: var(--gray-200);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .skill-bar-item .bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .skill-bar-item .bar-val {
+    width: 35px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-700);
+  }
+
+  .cert-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 10px;
+  }
+  .cert-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .cert-info { flex: 1; }
+  .cert-info .cert-name { font-weight: 600; font-size: 14px; }
+  .cert-info .cert-date { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  .leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+  }
+  .leaderboard-item.me {
+    background: #EEF2FF;
+    border: 1.5px solid var(--primary-light);
+  }
+  .lb-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+  .lb-rank.gold { background: #FEF3C7; color: #92400E; }
+  .lb-rank.silver { background: var(--gray-200); color: var(--gray-600); }
+  .lb-rank.bronze { background: #FED7AA; color: #9A3412; }
+  .lb-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+  }
+  .lb-info { flex: 1; }
+  .lb-info .lb-name { font-weight: 600; font-size: 14px; }
+  .lb-info .lb-sub { font-size: 12px; color: var(--gray-500); }
+  .lb-xp { font-weight: 800; font-size: 14px; color: var(--primary); }
+
+  /* ── Tab pills ── */
+  .tab-pills {
+    display: flex;
+    gap: 4px;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+  .tab-pill {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: all 0.2s;
+  }
+  .tab-pill.active {
+    background: white;
+    color: var(--gray-800);
+    box-shadow: var(--shadow);
+  }
+
+  /* ── Utilities ── */
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .text-muted { color: var(--gray-500); }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .fw-700 { font-weight: 700; }
+  .gap-8 { gap: 8px; }
+
+  /* ── Responsive container ── */
+  @media (min-width: 481px) {
+    body { background: var(--gray-200); }
+    .main-content {
+      box-shadow: var(--shadow-lg);
+      background: var(--gray-50);
+      min-height: 100vh;
+    }
+    .bottom-nav {
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+    }
+  }
+
+  /* ── Smart Nudges ── */
+  .nudge {
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+  }
+  .nudge::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+  .nudge .nudge-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .nudge .nudge-body { flex: 1; }
+  .nudge .nudge-body strong { font-weight: 700; }
+  .nudge .nudge-dismiss {
+    font-size: 14px;
+    color: inherit;
+    opacity: 0.4;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .nudge .nudge-dismiss:hover { opacity: 0.7; }
+  .nudge .nudge-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 6px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* Nudge variants */
+  .nudge-motivation {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+    color: #92400E;
+  }
+  .nudge-motivation::before { background: var(--warning); }
+  .nudge-motivation .nudge-cta { color: #B45309; }
+
+  .nudge-social {
+    background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+    color: #1E40AF;
+  }
+  .nudge-social::before { background: #3B82F6; }
+  .nudge-social .nudge-cta { color: #1D4ED8; }
+
+  .nudge-urgency {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FFF1F2 100%);
+    color: #991B1B;
+  }
+  .nudge-urgency::before { background: var(--danger); }
+  .nudge-urgency .nudge-cta { color: #DC2626; }
+
+  .nudge-tip {
+    background: linear-gradient(135deg, #EDE9FE 0%, #F5F3FF 100%);
+    color: #5B21B6;
+  }
+  .nudge-tip::before { background: var(--ai-purple); }
+  .nudge-tip .nudge-cta { color: var(--ai-purple); }
+
+  .nudge-success {
+    background: linear-gradient(135deg, #D1FAE5 0%, #ECFDF5 100%);
+    color: #065F46;
+  }
+  .nudge-success::before { background: var(--success); }
+  .nudge-success .nudge-cta { color: #059669; }
+
+  .nudge-streak {
+    background: linear-gradient(135deg, #FFF7ED 0%, #FFFBEB 100%);
+    color: #9A3412;
+    border: 1px solid #FDBA74;
+  }
+  .nudge-streak::before { background: #F97316; }
+
+  /* ── Animations ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .screen.active > * {
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Coach scenario view */
+  .scenario-view { display: none; }
+  .scenario-view.active { display: block; }
+  .scenarios-list { display: block; }
+  .scenarios-list.hidden { display: none; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    padding: 8px 0;
+    opacity: 0.9;
+    background: none;
+    border: none;
+  }
+  .back-btn:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP HEADER ═══════ -->
+<header class="top-header">
+  <div class="logo">
+    <div class="icon">⚡</div>
+    <span>SalesCode AI</span>
+  </div>
+  <div class="header-right">
+    <div class="notif-badge" onclick="showScreen('home')">
+      🔔<div class="dot"></div>
+    </div>
+    <div class="avatar-sm">MK</div>
+  </div>
+</header>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main class="main-content">
+
+  <!-- ━━━━━━ SCREEN: HOME DASHBOARD ━━━━━━ -->
+  <div class="screen active" id="screen-home">
+    <div class="welcome-banner">
+      <div class="greeting">Good morning 👋</div>
+      <div class="name">Maya Kumar</div>
+      <div class="streak-xp">
+        <div class="item">🔥 12 Day Streak</div>
+        <div class="item">⭐ 2,450 XP</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <!-- Daily Goals -->
+      <div class="card-header" style="margin-top:8px;">
+        <div class="card-title">Today's Goals</div>
+        <div class="text-xs text-muted">3 of 5 complete</div>
+      </div>
+      <div class="daily-goals mb-16">
+        <div class="goal-card" onclick="showScreen('paths')">
+          <div class="goal-icon">📖</div>
+          <div class="goal-val">2/3</div>
+          <div class="goal-label">Lessons</div>
+          <div class="goal-sub">1 remaining →</div>
+        </div>
+        <div class="goal-card" onclick="showScreen('coach')">
+          <div class="goal-icon">🎙️</div>
+          <div class="goal-val">1/2</div>
+          <div class="goal-label">AI Roleplays</div>
+          <div class="goal-sub">Start next →</div>
+        </div>
+        <div class="goal-card" onclick="showScreen('quiz')">
+          <div class="goal-icon">📝</div>
+          <div class="goal-val">✓</div>
+          <div class="goal-label">Quiz</div>
+          <div class="goal-sub" style="color:var(--success);">View results →</div>
+        </div>
+        <div class="goal-card" onclick="showScreen('peer-review')">
+          <div class="goal-icon">🎯</div>
+          <div class="goal-val">0/1</div>
+          <div class="goal-label">Peer Review</div>
+          <div class="goal-sub" style="color:var(--warning);">Give review →</div>
+        </div>
+      </div>
+
+      <!-- Smart Nudges -->
+      <div class="nudge nudge-streak">
+        <div class="nudge-icon">🔥</div>
+        <div class="nudge-body">
+          <strong>12-day streak!</strong> Complete 1 more lesson today to keep it alive. You're in the top 10% of new reps for consistency.
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <div class="nudge nudge-social">
+        <div class="nudge-icon">👀</div>
+        <div class="nudge-body">
+          <strong>Raj just finished Objection Handling</strong> and scored 84%. You're 1 module away from unlocking that section — finish Discovery Call to catch up!
+          <div class="nudge-cta" onclick="showScreen('paths')">Continue module →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- AI Suggestion -->
+      <div class="ai-suggestion" onclick="showScreen('coach')">
+        <div class="ai-icon">🤖</div>
+        <div class="ai-text">
+          <div class="ai-label">AI Coach Recommendation</div>
+          <div class="ai-msg">Based on yesterday's cold call practice, I'd suggest working on <strong>objection handling</strong> — specifically the "we already have a vendor" scenario. Ready to practice?</div>
+        </div>
+      </div>
+
+      <!-- Continue Learning -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Continue Learning</div>
+          <div class="card-link" onclick="showScreen('paths')">View Path →</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:48px;height:48px;border-radius:10px;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-size:22px;">💬</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Discovery Call Framework</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Module 4 of 8 · Week 2</div>
+            <div class="progress-bar mt-8" style="height:6px;">
+              <div class="progress-fill" style="width:60%;background:var(--primary);"></div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--primary);">60%</div>
+        </div>
+      </div>
+
+      <!-- Outlet Training -->
+      <div class="card" style="border-left:4px solid #0D9488;cursor:pointer;" onclick="showScreen('outlets')">
+        <div class="card-header">
+          <div class="card-title">🏢 Outlet Training</div>
+          <div class="card-link" onclick="showScreen('outlets')">View All →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+            <div style="font-size:20px;">🏪</div>
+            <div style="font-size:13px;font-weight:700;margin-top:2px;">Walmart</div>
+            <div style="font-size:11px;color:#0071DC;font-weight:600;">75%</div>
+          </div>
+          <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+            <div style="font-size:20px;">🏬</div>
+            <div style="font-size:13px;font-weight:700;margin-top:2px;">Costco</div>
+            <div style="font-size:11px;color:#E31837;font-weight:600;">50%</div>
+          </div>
+          <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+            <div style="font-size:20px;">🎯</div>
+            <div style="font-size:13px;font-weight:700;margin-top:2px;">Target</div>
+            <div style="font-size:11px;color:#CC0000;font-weight:600;">20%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Upcoming</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon" style="background:#DBEAFE;">📞</div>
+          <div class="upcoming-info">
+            <div class="title">Live Call Shadowing</div>
+            <div class="sub">With Sarah Chen · Mentor</div>
+          </div>
+          <div class="upcoming-time">2:00 PM</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon" style="background:#EDE9FE;">🤖</div>
+          <div class="upcoming-info">
+            <div class="title">AI Roleplay: Pricing Objection</div>
+            <div class="sub">Assigned by Manager</div>
+          </div>
+          <div class="upcoming-time">3:30 PM</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon" style="background:#FEF3C7;">📋</div>
+          <div class="upcoming-info">
+            <div class="title">Week 2 Assessment</div>
+            <div class="sub">Covers Modules 3–5</div>
+          </div>
+          <div class="upcoming-time">Friday</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: LEARNING PATHS ━━━━━━ -->
+  <div class="screen" id="screen-paths">
+    <div class="path-header">
+      <div class="path-label">Active Learning Path</div>
+      <div class="path-name">🚀 New Rep Onboarding — Enterprise SaaS</div>
+      <div class="path-meta">
+        <span>📅 6 Weeks</span>
+        <span>📦 24 Modules</span>
+        <span>🏆 3 Certs</span>
+      </div>
+      <div class="path-progress-bar"><div class="fill"></div></div>
+      <div class="path-progress-text">
+        <span>8 of 24 modules complete</span>
+        <span>35%</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <!-- Pace Nudge -->
+      <div class="nudge nudge-success">
+        <div class="nudge-icon">⚡</div>
+        <div class="nudge-body">
+          <strong>Ahead of schedule!</strong> At your current pace, you'll finish Week 2 by Wednesday — that's 2 days early. Reps who complete onboarding early close their first deal <strong>40% sooner</strong>.
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Week 1 -->
+      <div class="week-section">
+        <div class="week-label">✅ Week 1 — Foundations</div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">📖</div>
+          <div class="module-info">
+            <div class="mod-title">Company & Product Overview</div>
+            <div class="mod-sub">Video + Quiz · 45 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">🎯</div>
+          <div class="module-info">
+            <div class="mod-title">ICP & Buyer Personas</div>
+            <div class="mod-sub">Interactive · 30 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">💡</div>
+          <div class="module-info">
+            <div class="mod-title">Value Proposition Workshop</div>
+            <div class="mod-sub">AI Roleplay · 40 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">🔧</div>
+          <div class="module-info">
+            <div class="mod-title">CRM & Tools Setup</div>
+            <div class="mod-sub">Hands-on Lab · 50 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+      </div>
+
+      <!-- Milestone -->
+      <div class="milestone-card">
+        <div class="mile-icon">🏆</div>
+        <div class="mile-title">Foundation Certification — Earned!</div>
+        <div class="mile-sub">Scored 92% on assessment · Feb 24</div>
+      </div>
+
+      <!-- Week 2 -->
+      <div class="week-section">
+        <div class="week-label">📍 Week 2 — Prospecting & Outreach</div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">📧</div>
+          <div class="module-info">
+            <div class="mod-title">Cold Email Playbook</div>
+            <div class="mod-sub">Templates + AI Practice · 35 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">📞</div>
+          <div class="module-info">
+            <div class="mod-title">Cold Call Framework</div>
+            <div class="mod-sub">Video + AI Roleplay · 45 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card completed">
+          <div class="module-icon" style="background:#D1FAE5;">🔗</div>
+          <div class="module-info">
+            <div class="mod-title">LinkedIn Social Selling</div>
+            <div class="mod-sub">Interactive · 30 min</div>
+          </div>
+          <div class="module-status">✅</div>
+        </div>
+        <div class="module-card current">
+          <div class="module-icon" style="background:#EEF2FF;">💬</div>
+          <div class="module-info">
+            <div class="mod-title">Discovery Call Framework</div>
+            <div class="mod-sub">Video + AI Roleplay · 50 min</div>
+            <div class="mod-progress"><div class="fill" style="width:60%;background:var(--primary);"></div></div>
+          </div>
+          <div class="module-status" style="color:var(--primary);font-weight:700;font-size:13px;">60%</div>
+        </div>
+      </div>
+
+      <!-- Skill Connection Nudge -->
+      <div class="nudge nudge-tip">
+        <div class="nudge-icon">💡</div>
+        <div class="nudge-body">
+          <strong>Pro tip:</strong> The Discovery Call module you're in now directly feeds into Week 3's Objection Handling. Pay extra attention to <strong>open-ended questions</strong> — reps who nail discovery score 30% higher on objections.
+          <div class="nudge-cta" onclick="showScreen('coach')">Practice discovery questions with AI →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Week 3 -->
+      <div class="week-section">
+        <div class="week-label">🔒 Week 3 — Handling Conversations</div>
+        <div class="module-card locked">
+          <div class="module-icon" style="background:var(--gray-100);">🛡️</div>
+          <div class="module-info">
+            <div class="mod-title">Objection Handling Masterclass</div>
+            <div class="mod-sub">AI Scenario-Based · 55 min</div>
+          </div>
+          <div class="module-status">🔒</div>
+        </div>
+        <div class="module-card locked">
+          <div class="module-icon" style="background:var(--gray-100);">📊</div>
+          <div class="module-info">
+            <div class="mod-title">Demo & Presentation Skills</div>
+            <div class="mod-sub">Video + Practice · 60 min</div>
+          </div>
+          <div class="module-status">🔒</div>
+        </div>
+        <div class="module-card locked">
+          <div class="module-icon" style="background:var(--gray-100);">💰</div>
+          <div class="module-info">
+            <div class="mod-title">Pricing & Negotiation</div>
+            <div class="mod-sub">AI Roleplay + Quiz · 45 min</div>
+          </div>
+          <div class="module-status">🔒</div>
+        </div>
+        <div class="module-card locked">
+          <div class="module-icon" style="background:var(--gray-100);">🤝</div>
+          <div class="module-info">
+            <div class="mod-title">Closing Techniques</div>
+            <div class="mod-sub">Case Studies · 40 min</div>
+          </div>
+          <div class="module-status">🔒</div>
+        </div>
+      </div>
+
+      <!-- Milestone -->
+      <div class="milestone-card" style="opacity:0.6;">
+        <div class="mile-icon">🏆</div>
+        <div class="mile-title">Prospecting Certification</div>
+        <div class="mile-sub">Complete Weeks 2–3 to unlock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: AI COACH ━━━━━━ -->
+  <div class="screen" id="screen-coach">
+    <!-- Scenario Selection View -->
+    <div class="scenarios-list" id="scenarios-list">
+      <div class="coach-header">
+        <div class="coach-avatar">🤖</div>
+        <div class="coach-name">SalesCode AI Coach</div>
+        <div class="coach-desc">Practice real scenarios with adaptive AI feedback</div>
+      </div>
+
+      <div class="section">
+        <!-- Recent Feedback -->
+        <div class="feedback-card">
+          <div class="fb-header">✨ Last Session Summary</div>
+          <div style="display:flex;gap:16px;align-items:center;">
+            <div>
+              <div class="score-ring">
+                <div class="score-ring-inner">78</div>
+              </div>
+              <div class="text-xs text-muted" style="text-align:center;">Overall</div>
+            </div>
+            <div class="feedback-metrics" style="flex:1;">
+              <div class="fb-metric">
+                <div class="val" style="color:var(--success);">85</div>
+                <div class="label">Rapport</div>
+              </div>
+              <div class="fb-metric">
+                <div class="val" style="color:var(--warning);">72</div>
+                <div class="label">Discovery</div>
+              </div>
+              <div class="fb-metric">
+                <div class="val" style="color:var(--primary);">80</div>
+                <div class="label">Pitch</div>
+              </div>
+              <div class="fb-metric">
+                <div class="val" style="color:var(--danger);">65</div>
+                <div class="label">Objections</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Practice Frequency Nudge -->
+        <div class="nudge nudge-urgency">
+          <div class="nudge-icon">⏰</div>
+          <div class="nudge-body">
+            <strong>3 days since your last objection practice.</strong> Reps who practice daily score 24% higher on assessments. Your objection score is at 65 — one focused session could push you past 75.
+            <div class="nudge-cta" onclick="startScenario()">Start a quick 10-min session →</div>
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <!-- Retry Encouragement Nudge -->
+        <div class="nudge nudge-motivation">
+          <div class="nudge-icon">🎯</div>
+          <div class="nudge-body">
+            <strong>Almost there!</strong> You scored 74 on "Discovery Call: Mid-Market" yesterday — that's up from 61 on your first try. One more attempt and you could break 80 and earn a <strong>+50 XP bonus</strong>.
+            <div class="nudge-cta" onclick="startScenario()">Retry for the bonus →</div>
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <!-- Recommended -->
+        <div class="card-header">
+          <div class="card-title">🎯 AI Recommended</div>
+        </div>
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#FEE2E2;">🛡️</div>
+            <div class="scenario-info">
+              <div class="sc-title">"We Already Have a Vendor"</div>
+              <div class="sc-sub">Practice handling competitive displacement objections</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="tag tag-ai">🤖 AI Recommended</span>
+            <span class="scenario-diff diff-intermediate">Intermediate</span>
+            <span class="text-xs text-muted">~15 min</span>
+          </div>
+        </div>
+
+        <div class="card-header mt-12">
+          <div class="card-title">Practice Scenarios</div>
+        </div>
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#DBEAFE;">📞</div>
+            <div class="scenario-info">
+              <div class="sc-title">Cold Call: VP of Sales</div>
+              <div class="sc-sub">Get past the gatekeeper and book a meeting</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="scenario-diff diff-beginner">Beginner</span>
+            <span class="text-xs text-muted">~10 min</span>
+            <span class="text-xs text-muted">⭐ +50 XP</span>
+          </div>
+        </div>
+
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#EDE9FE;">💬</div>
+            <div class="scenario-info">
+              <div class="sc-title">Discovery Call: Mid-Market</div>
+              <div class="sc-sub">Uncover pain points and qualify a mid-market prospect</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="scenario-diff diff-intermediate">Intermediate</span>
+            <span class="text-xs text-muted">~20 min</span>
+            <span class="text-xs text-muted">⭐ +100 XP</span>
+          </div>
+        </div>
+
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#FEF3C7;">💰</div>
+            <div class="scenario-info">
+              <div class="sc-title">Pricing Negotiation: Enterprise</div>
+              <div class="sc-sub">Navigate a multi-stakeholder pricing discussion</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="scenario-diff diff-advanced">Advanced</span>
+            <span class="text-xs text-muted">~25 min</span>
+            <span class="text-xs text-muted">⭐ +150 XP</span>
+          </div>
+        </div>
+
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#D1FAE5;">🤝</div>
+            <div class="scenario-info">
+              <div class="sc-title">Closing: Stalled Deal Revival</div>
+              <div class="sc-sub">Re-engage a prospect who went dark after demo</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="scenario-diff diff-advanced">Advanced</span>
+            <span class="text-xs text-muted">~20 min</span>
+            <span class="text-xs text-muted">⭐ +125 XP</span>
+          </div>
+        </div>
+
+        <div class="scenario-card" onclick="startScenario()">
+          <div class="scenario-top">
+            <div class="scenario-icon" style="background:#FCE7F3;">📊</div>
+            <div class="scenario-info">
+              <div class="sc-title">Product Demo: CTO Audience</div>
+              <div class="sc-sub">Deliver a technical demo to a skeptical CTO</div>
+            </div>
+          </div>
+          <div class="scenario-tags">
+            <span class="scenario-diff diff-advanced">Advanced</span>
+            <span class="text-xs text-muted">~30 min</span>
+            <span class="text-xs text-muted">⭐ +175 XP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Roleplay Chat View -->
+    <div class="scenario-view" id="scenario-view">
+      <div style="background:linear-gradient(135deg,var(--ai-purple),var(--primary));color:white;padding:12px 16px;">
+        <button class="back-btn" onclick="exitScenario()">← Back</button>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+          <div style="font-size:18px;">🛡️</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">"We Already Have a Vendor"</div>
+            <div style="font-size:11px;opacity:0.8;">Competitive Displacement · Intermediate</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-container active">
+        <div class="chat-messages">
+          <div style="text-align:center;margin:10px 0;">
+            <span class="tag tag-ai" style="font-size:12px;">🎭 Scenario: You're calling a prospect who uses a competitor</span>
+          </div>
+          <div class="chat-bubble ai">
+            <div class="sender">🤖 AI Prospect — Dana (VP Ops at TechCorp)</div>
+            Hi, this is Dana. I've got about five minutes. What's this about?
+          </div>
+          <div class="chat-bubble user">
+            <div class="sender">You (Sales Rep)</div>
+            Hi Dana, thanks for taking the time. I'm reaching out because we work with companies similar to TechCorp, and I wanted to see if there are areas where you're looking to improve your sales enablement process.
+          </div>
+          <div class="chat-bubble ai">
+            <div class="sender">🤖 Dana</div>
+            Look, we already use SalesForce for that. We're pretty happy with what we have, and I don't really have time to evaluate new tools right now.
+          </div>
+          <div style="padding:12px;background:#F5F3FF;border-radius:var(--radius);margin:8px 0;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ai-purple);font-weight:700;margin-bottom:6px;">
+              💡 AI Coach Tip
+            </div>
+            <div style="font-size:13px;color:var(--gray-600);line-height:1.5;">
+              The prospect is using the classic "happy with current vendor" objection. Try <strong>acknowledging</strong> their satisfaction, then ask a <strong>curiosity-driven question</strong> about a specific pain point your solution addresses uniquely. Avoid directly criticizing their current vendor.
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input class="chat-input" placeholder="Type your response..." />
+          <button class="chat-send">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: KNOWLEDGE BASE ━━━━━━ -->
+  <div class="screen" id="screen-kb">
+    <div class="section">
+      <div class="section-title">Knowledge Base</div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input placeholder="Search playbooks, battle cards, product info..." />
+      </div>
+
+      <div class="kb-category">
+        <div class="kb-cat-item active">All</div>
+        <div class="kb-cat-item">Playbooks</div>
+        <div class="kb-cat-item">Battle Cards</div>
+        <div class="kb-cat-item">Product</div>
+        <div class="kb-cat-item">Scripts</div>
+        <div class="kb-cat-item">Case Studies</div>
+      </div>
+
+      <!-- AI Quick Answer -->
+      <div class="ai-suggestion" style="margin-bottom:16px;">
+        <div class="ai-icon">🤖</div>
+        <div class="ai-text">
+          <div class="ai-label">Ask AI Anything</div>
+          <div class="ai-msg">Get instant answers about products, pricing, competitors, or processes. I'll pull from the full knowledge base.</div>
+        </div>
+      </div>
+
+      <div class="card-header">
+        <div class="card-title">📌 Pinned</div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#DBEAFE;">📋</div>
+        <div class="kb-info">
+          <div class="kb-title">Enterprise Cold Call Script</div>
+          <div class="kb-desc">Opening, qualifying questions, value props, and close</div>
+          <div class="kb-meta"><span>📄 Script</span><span>Updated 2d ago</span></div>
+        </div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#FEE2E2;">⚔️</div>
+        <div class="kb-info">
+          <div class="kb-title">Competitor Battle Card: SalesForce</div>
+          <div class="kb-desc">Feature comparison, weaknesses, win strategies</div>
+          <div class="kb-meta"><span>🃏 Battle Card</span><span>Updated 5d ago</span></div>
+        </div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#D1FAE5;">📊</div>
+        <div class="kb-info">
+          <div class="kb-title">ROI Calculator & Talk Track</div>
+          <div class="kb-desc">Pricing tier breakdown with ROI narratives per persona</div>
+          <div class="kb-meta"><span>📊 Tool</span><span>Updated 1w ago</span></div>
+        </div>
+      </div>
+
+      <div class="card-header mt-12">
+        <div class="card-title">📚 Recently Added</div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#EDE9FE;">📦</div>
+        <div class="kb-info">
+          <div class="kb-title">Q1 2026 Product Release Notes</div>
+          <div class="kb-desc">New features, integrations, and messaging guidance</div>
+          <div class="kb-meta"><span>📦 Product</span><span>Added today</span></div>
+        </div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#FEF3C7;">🏢</div>
+        <div class="kb-info">
+          <div class="kb-title">Case Study: Acme Corp — 3x Pipeline</div>
+          <div class="kb-desc">How Acme grew pipeline 3x using our platform in 90 days</div>
+          <div class="kb-meta"><span>📖 Case Study</span><span>Added 3d ago</span></div>
+        </div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#FCE7F3;">🧭</div>
+        <div class="kb-info">
+          <div class="kb-title">Prospecting Playbook: Mid-Market</div>
+          <div class="kb-desc">Step-by-step outbound sequence for 200–1000 employee companies</div>
+          <div class="kb-meta"><span>📋 Playbook</span><span>Added 5d ago</span></div>
+        </div>
+      </div>
+      <div class="kb-item">
+        <div class="kb-icon" style="background:#E0E7FF;">💡</div>
+        <div class="kb-info">
+          <div class="kb-title">Objection Handling Cheat Sheet</div>
+          <div class="kb-desc">Top 15 objections with proven response frameworks</div>
+          <div class="kb-meta"><span>📄 Script</span><span>Added 1w ago</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: PROGRESS & ACHIEVEMENTS ━━━━━━ -->
+  <div class="screen" id="screen-progress">
+    <div class="progress-header">
+      <div class="level-badge">⭐ Level 4 — Rising Closer</div>
+      <div style="font-size:28px;font-weight:800;">2,450 XP</div>
+      <div class="xp-bar-container">
+        <div class="xp-bar"><div class="fill"></div></div>
+        <div class="xp-labels">
+          <span>Level 4</span>
+          <span>550 XP to Level 5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="tab-pills">
+        <div class="tab-pill active" onclick="showProgressTab(this,'skills-tab')">Skills</div>
+        <div class="tab-pill" onclick="showProgressTab(this,'certs-tab')">Certs</div>
+        <div class="tab-pill" onclick="showProgressTab(this,'lb-tab')">Leaderboard</div>
+      </div>
+
+      <!-- Skills Tab -->
+      <div id="skills-tab" class="progress-tab-content">
+        <!-- Weekly Improvement Nudge -->
+        <div class="nudge nudge-success">
+          <div class="nudge-icon">📈</div>
+          <div class="nudge-body">
+            <strong>Great week!</strong> Your discovery skills improved <strong>+8%</strong> and pitching went up <strong>+5%</strong>. Keep this pace and you'll hit target proficiency across all skills in ~2 weeks.
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <!-- Weakness Focus Nudge -->
+        <div class="nudge nudge-tip">
+          <div class="nudge-icon">🎯</div>
+          <div class="nudge-body">
+            <strong>Negotiation is your biggest growth opportunity.</strong> Reps at your level who hit 70%+ on negotiation close deals 35% faster. I've queued a tailored practice plan — just 15 min/day for a week.
+            <div class="nudge-cta" onclick="showScreen('coach')">Start negotiation practice plan →</div>
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title mb-8">Skill Proficiency</div>
+          <div style="margin-top:12px;">
+            <div class="skill-bar-item">
+              <div class="skill-name">Prospecting</div>
+              <div class="bar-container"><div class="bar-fill" style="width:82%;background:var(--success);"></div></div>
+              <div class="bar-val">82%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Discovery</div>
+              <div class="bar-container"><div class="bar-fill" style="width:72%;background:var(--primary);"></div></div>
+              <div class="bar-val">72%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Pitching</div>
+              <div class="bar-container"><div class="bar-fill" style="width:80%;background:var(--primary);"></div></div>
+              <div class="bar-val">80%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Objections</div>
+              <div class="bar-container"><div class="bar-fill" style="width:55%;background:var(--warning);"></div></div>
+              <div class="bar-val">55%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Negotiation</div>
+              <div class="bar-container"><div class="bar-fill" style="width:45%;background:var(--danger);"></div></div>
+              <div class="bar-val">45%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Closing</div>
+              <div class="bar-container"><div class="bar-fill" style="width:60%;background:var(--warning);"></div></div>
+              <div class="bar-val">60%</div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-name">Product</div>
+              <div class="bar-container"><div class="bar-fill" style="width:88%;background:var(--success);"></div></div>
+              <div class="bar-val">88%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-suggestion">
+          <div class="ai-icon">🤖</div>
+          <div class="ai-text">
+            <div class="ai-label">AI Skill Gap Analysis</div>
+            <div class="ai-msg">Your <strong>negotiation</strong> and <strong>objection handling</strong> skills are below target. I recommend 2–3 focused roleplay sessions this week to improve. Tap to start a tailored practice plan.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certs Tab -->
+      <div id="certs-tab" class="progress-tab-content" style="display:none;">
+        <!-- Certification Nudge -->
+        <div class="nudge nudge-motivation">
+          <div class="nudge-icon">🏆</div>
+          <div class="nudge-body">
+            <strong>Prospecting Mastery is 60% done!</strong> Certified reps get priority access to inbound leads. Aisha and Raj already earned theirs this week.
+            <div class="nudge-cta" onclick="showScreen('paths')">Resume learning path →</div>
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <div class="card-header">
+          <div class="card-title">🏆 Certifications</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon" style="background:#D1FAE5;">🏅</div>
+          <div class="cert-info">
+            <div class="cert-name">Foundation Certification</div>
+            <div class="cert-date">Earned Feb 24 · Score: 92%</div>
+          </div>
+          <span class="tag tag-success">Earned</span>
+        </div>
+        <div class="cert-card" style="opacity:0.7;">
+          <div class="cert-icon" style="background:var(--gray-100);">🎯</div>
+          <div class="cert-info">
+            <div class="cert-name">Prospecting Mastery</div>
+            <div class="cert-date">Complete Week 3 · 60% there</div>
+          </div>
+          <span class="tag tag-warning">In Progress</span>
+        </div>
+        <div class="cert-card" style="opacity:0.5;">
+          <div class="cert-icon" style="background:var(--gray-100);">💎</div>
+          <div class="cert-info">
+            <div class="cert-name">Deal Closer Elite</div>
+            <div class="cert-date">Complete Weeks 4–6</div>
+          </div>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-500);">Locked</span>
+        </div>
+
+        <div class="card-header mt-12">
+          <div class="card-title">🎖️ Badges</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div style="text-align:center;">
+            <div style="font-size:32px;">🔥</div>
+            <div class="text-xs fw-700">10-Day<br>Streak</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:32px;">🎙️</div>
+            <div class="text-xs fw-700">First<br>Roleplay</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:32px;">📧</div>
+            <div class="text-xs fw-700">Email<br>Master</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:32px;">💡</div>
+            <div class="text-xs fw-700">Quick<br>Learner</div>
+          </div>
+          <div style="text-align:center;opacity:0.4;">
+            <div style="font-size:32px;">🏆</div>
+            <div class="text-xs fw-700">Top 10<br>Weekly</div>
+          </div>
+          <div style="text-align:center;opacity:0.4;">
+            <div style="font-size:32px;">🤝</div>
+            <div class="text-xs fw-700">Deal<br>Closer</div>
+          </div>
+          <div style="text-align:center;opacity:0.4;">
+            <div style="font-size:32px;">⭐</div>
+            <div class="text-xs fw-700">Perfect<br>Score</div>
+          </div>
+          <div style="text-align:center;opacity:0.4;">
+            <div style="font-size:32px;">🎯</div>
+            <div class="text-xs fw-700">Quota<br>Crusher</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Tab -->
+      <div id="lb-tab" class="progress-tab-content" style="display:none;">
+        <!-- Leaderboard Nudge -->
+        <div class="nudge nudge-motivation">
+          <div class="nudge-icon">🏅</div>
+          <div class="nudge-body">
+            <strong>350 XP behind Tyler for 3rd place!</strong> Complete 2 AI roleplay sessions today (+100 XP each) and finish your current module (+150 XP) to overtake him by end of day.
+            <div class="nudge-cta" onclick="showScreen('coach')">Earn XP now →</div>
+          </div>
+          <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
+
+        <div class="card-header">
+          <div class="card-title">🏅 This Week's Leaderboard</div>
+          <div class="text-xs text-muted">New Rep Cohort</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank gold">1</div>
+          <div class="lb-avatar" style="background:#6366F1;">AJ</div>
+          <div class="lb-info">
+            <div class="lb-name">Aisha Johnson</div>
+            <div class="lb-sub">Level 5 · 18 day streak</div>
+          </div>
+          <div class="lb-xp">3,200 XP</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank silver">2</div>
+          <div class="lb-avatar" style="background:#EC4899;">RC</div>
+          <div class="lb-info">
+            <div class="lb-name">Raj Chopra</div>
+            <div class="lb-sub">Level 5 · 14 day streak</div>
+          </div>
+          <div class="lb-xp">3,050 XP</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank bronze">3</div>
+          <div class="lb-avatar" style="background:#F59E0B;">TW</div>
+          <div class="lb-info">
+            <div class="lb-name">Tyler Wong</div>
+            <div class="lb-sub">Level 4 · 11 day streak</div>
+          </div>
+          <div class="lb-xp">2,800 XP</div>
+        </div>
+        <div class="leaderboard-item me">
+          <div class="lb-rank" style="background:#EEF2FF;color:var(--primary);font-weight:800;">4</div>
+          <div class="lb-avatar" style="background:var(--primary);">MK</div>
+          <div class="lb-info">
+            <div class="lb-name">Maya Kumar (You)</div>
+            <div class="lb-sub">Level 4 · 12 day streak</div>
+          </div>
+          <div class="lb-xp" style="color:var(--primary);">2,450 XP</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank">5</div>
+          <div class="lb-avatar" style="background:#10B981;">SM</div>
+          <div class="lb-info">
+            <div class="lb-name">Sam Miller</div>
+            <div class="lb-sub">Level 3 · 7 day streak</div>
+          </div>
+          <div class="lb-xp">2,100 XP</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank">6</div>
+          <div class="lb-avatar" style="background:#8B5CF6;">LP</div>
+          <div class="lb-info">
+            <div class="lb-name">Lisa Park</div>
+            <div class="lb-sub">Level 3 · 5 day streak</div>
+          </div>
+          <div class="lb-xp">1,875 XP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: QUIZZES & ASSESSMENTS ━━━━━━ -->
+  <div class="screen" id="screen-quiz">
+    <div style="background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:white;padding:20px;border-radius:0 0 24px 24px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="cursor:pointer;opacity:0.8;" onclick="showScreen('home')">← Home</span>
+      </div>
+      <div style="font-size:22px;font-weight:700;">Quizzes & Assessments</div>
+      <div style="font-size:13px;opacity:0.85;margin-top:4px;">Test your knowledge and track your scores</div>
+    </div>
+
+    <div class="section">
+      <!-- Nudge -->
+      <div class="nudge nudge-success">
+        <div class="nudge-icon">🎉</div>
+        <div class="nudge-body">
+          <strong>Nice work on today's quiz!</strong> You scored 88% on Cold Email Playbook — that's 12 points above the cohort average. Your email skills are getting sharp.
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Active Quiz -->
+      <div class="card-header">
+        <div class="card-title">📝 Take a Quiz Now</div>
+      </div>
+
+      <div class="quiz-question-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div>
+            <div style="font-weight:700;font-size:15px;">Discovery Call Framework</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Module 4 Assessment · 10 questions · ~8 min</div>
+          </div>
+          <span class="tag tag-warning">Due Today</span>
+        </div>
+
+        <div class="quiz-question-num">Question 3 of 10</div>
+        <div class="quiz-question-text">When a prospect says "We're happy with our current solution," the most effective next step is to:</div>
+
+        <div class="quiz-option" onclick="selectQuiz(this)">
+          <div class="quiz-radio"></div>
+          <div>Immediately pitch your product's advantages over their current solution</div>
+        </div>
+        <div class="quiz-option" onclick="selectQuiz(this)">
+          <div class="quiz-radio"></div>
+          <div>Acknowledge their satisfaction and ask what "happy" looks like in specific terms</div>
+        </div>
+        <div class="quiz-option" onclick="selectQuiz(this)">
+          <div class="quiz-radio"></div>
+          <div>Ask if they've evaluated competitors recently</div>
+        </div>
+        <div class="quiz-option" onclick="selectQuiz(this)">
+          <div class="quiz-radio"></div>
+          <div>Offer a discount to incentivize switching</div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn btn-outline btn-sm">← Previous</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm">Skip</button>
+            <button class="btn btn-primary btn-sm">Submit Answer →</button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div style="margin-top:14px;">
+          <div class="progress-bar" style="height:6px;">
+            <div class="progress-fill" style="width:30%;background:var(--primary);"></div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;text-align:center;">3 of 10 answered</div>
+        </div>
+      </div>
+
+      <!-- Today's Completed Quiz -->
+      <div class="card-header mt-12">
+        <div class="card-title">✅ Completed Today</div>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--success);flex-shrink:0;">88%</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Cold Email Playbook Quiz</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">8 of 9 correct · Completed 10:15 AM</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <span class="tag tag-success" style="font-size:10px;">⭐ +75 XP</span>
+            <span class="tag tag-primary" style="font-size:10px;">Cohort avg: 76%</span>
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--gray-400);">›</div>
+      </div>
+
+      <!-- Upcoming Quizzes -->
+      <div class="card-header mt-12">
+        <div class="card-title">📅 Upcoming Assessments</div>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:10px;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">💬</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Discovery Call Framework</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">10 questions · Module 4 assessment</div>
+          <div style="font-size:11px;color:var(--warning);font-weight:600;margin-top:4px;">Due today</div>
+        </div>
+        <span class="tag tag-warning" style="font-size:10px;">In Progress</span>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📋</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Week 2 Assessment</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">30 questions · Covers Modules 3–5</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">Due Friday, Mar 14</div>
+        </div>
+        <span class="tag" style="background:var(--gray-100);color:var(--gray-500);font-size:10px;">Not Started</span>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏆</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Prospecting Certification Exam</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">50 questions + AI roleplay · Must score 80%+</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">Unlocks after Week 3</div>
+        </div>
+        <span class="tag" style="background:var(--gray-100);color:var(--gray-500);font-size:10px;">Locked</span>
+      </div>
+
+      <!-- Past Results -->
+      <div class="card-header mt-12">
+        <div class="card-title">📊 Past Results</div>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--success);flex-shrink:0;">92%</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Foundation Certification</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">46 of 50 correct · Feb 24</div>
+        </div>
+        <span class="tag tag-success" style="font-size:10px;">Passed</span>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--success);flex-shrink:0;">85%</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">ICP & Buyer Personas</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">17 of 20 correct · Feb 20</div>
+        </div>
+        <span class="tag tag-success" style="font-size:10px;">Passed</span>
+      </div>
+
+      <div class="quiz-result-card">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--warning-light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--warning);flex-shrink:0;">68%</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Objection Handling Basics</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Retry attempt · Improved from 52% · Mar 12</div>
+        </div>
+        <span class="tag tag-warning" style="font-size:10px;">Retry Available</span>
+      </div>
+
+      <!-- Nudge -->
+      <div class="nudge nudge-tip" style="margin-top:12px;">
+        <div class="nudge-icon">💡</div>
+        <div class="nudge-body">
+          <strong>Quiz tip:</strong> You tend to lose points on scenario-based questions. Try running an AI roleplay before retaking the Objection Handling quiz — hands-on practice helps you reason through tricky situational answers.
+          <div class="nudge-cta" onclick="showScreen('coach')">Practice objections with AI →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: PEER REVIEW ━━━━━━ -->
+  <div class="screen" id="screen-peer-review">
+    <div style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;padding:20px;border-radius:0 0 24px 24px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="cursor:pointer;opacity:0.8;" onclick="showScreen('home')">← Home</span>
+      </div>
+      <div style="font-size:22px;font-weight:700;">Peer Reviews</div>
+      <div style="font-size:13px;opacity:0.85;margin-top:4px;">Give and receive feedback on roleplay recordings</div>
+      <div style="display:flex;gap:12px;margin-top:12px;">
+        <div style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-size:13px;">📤 1 to give</div>
+        <div style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-size:13px;">📥 2 received</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <!-- Nudge -->
+      <div class="nudge nudge-motivation">
+        <div class="nudge-icon">🤝</div>
+        <div class="nudge-body">
+          <strong>Peer feedback makes everyone better!</strong> Reps who give thoughtful reviews score 18% higher on their own roleplays. You'll also earn <strong>+25 XP</strong> for each review you submit.
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Pending: Reviews to Give -->
+      <div class="card-header">
+        <div class="card-title">📤 Reviews to Give</div>
+        <span class="tag tag-warning">1 pending</span>
+      </div>
+
+      <div class="review-card pending-review">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;">TW</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:15px;">Tyler Wong</div>
+            <div style="font-size:12px;color:var(--gray-500);">Cold Call: VP of Sales · Recorded yesterday</div>
+          </div>
+          <span class="tag tag-warning">Review Due</span>
+        </div>
+
+        <!-- Audio/Recording Player mockup -->
+        <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;cursor:pointer;">▶</div>
+            <div style="flex:1;">
+              <div style="height:4px;background:var(--gray-200);border-radius:2px;">
+                <div style="height:100%;width:0%;background:var(--primary);border-radius:2px;"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                <span style="font-size:11px;color:var(--gray-500);">0:00</span>
+                <span style="font-size:11px;color:var(--gray-500);">12:34</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating -->
+        <div style="margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px;">Rate this roleplay:</div>
+          <div class="review-stars">
+            <span class="star empty" onclick="rateStars(this,1)">★</span>
+            <span class="star empty" onclick="rateStars(this,2)">★</span>
+            <span class="star empty" onclick="rateStars(this,3)">★</span>
+            <span class="star empty" onclick="rateStars(this,4)">★</span>
+            <span class="star empty" onclick="rateStars(this,5)">★</span>
+          </div>
+        </div>
+
+        <!-- Quick tags -->
+        <div style="margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px;">What went well? (tap to select)</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#DBEAFE';this.style.color='#1D4ED8'">Strong opening</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#DBEAFE';this.style.color='#1D4ED8'">Good questions</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#DBEAFE';this.style.color='#1D4ED8'">Clear value prop</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#DBEAFE';this.style.color='#1D4ED8'">Good energy</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#DBEAFE';this.style.color='#1D4ED8'">Handled objection</span>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px;">Areas to improve:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#FEF3C7';this.style.color='#92400E'">Talked too much</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#FEF3C7';this.style.color='#92400E'">Missed pain points</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#FEF3C7';this.style.color='#92400E'">Weak close</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#FEF3C7';this.style.color='#92400E'">No next steps</span>
+            <span class="tag" style="background:var(--gray-100);color:var(--gray-600);cursor:pointer;" onclick="this.style.background='#FEF3C7';this.style.color='#92400E'">Not enough questions</span>
+          </div>
+        </div>
+
+        <textarea class="review-comment" placeholder="Add your written feedback (optional but earns +10 XP bonus)..."></textarea>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+          <button class="btn btn-outline btn-sm">Save Draft</button>
+          <button class="btn btn-primary btn-sm">Submit Review (+25 XP) →</button>
+        </div>
+      </div>
+
+      <!-- Reviews Received -->
+      <div class="card-header mt-12">
+        <div class="card-title">📥 Reviews You Received</div>
+      </div>
+
+      <div class="review-card received-review">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;">AJ</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Aisha Johnson reviewed your roleplay</div>
+            <div style="font-size:12px;color:var(--gray-500);">Discovery Call: Mid-Market · 2 days ago</div>
+          </div>
+        </div>
+        <div class="review-stars" style="margin-bottom:8px;">
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star empty">★</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          <span class="tag" style="background:#DBEAFE;color:#1D4ED8;font-size:10px;">Strong opening</span>
+          <span class="tag" style="background:#DBEAFE;color:#1D4ED8;font-size:10px;">Good energy</span>
+          <span class="tag" style="background:#FEF3C7;color:#92400E;font-size:10px;">Missed pain points</span>
+        </div>
+        <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px;font-size:13px;color:var(--gray-600);line-height:1.5;">
+          "Great energy on the call! I liked how you opened with a reference to their industry. One thing — when the prospect mentioned budget concerns, you could have probed deeper instead of pivoting to features. Try asking 'What does budget look like for this kind of initiative?' next time."
+        </div>
+      </div>
+
+      <div class="review-card received-review">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#EC4899;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;">RC</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Raj Chopra reviewed your roleplay</div>
+            <div style="font-size:12px;color:var(--gray-500);">Cold Call: VP of Sales · 4 days ago</div>
+          </div>
+        </div>
+        <div class="review-stars" style="margin-bottom:8px;">
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star empty">★</span>
+          <span class="star empty">★</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          <span class="tag" style="background:#DBEAFE;color:#1D4ED8;font-size:10px;">Clear value prop</span>
+          <span class="tag" style="background:#FEF3C7;color:#92400E;font-size:10px;">Talked too much</span>
+          <span class="tag" style="background:#FEF3C7;color:#92400E;font-size:10px;">Weak close</span>
+        </div>
+        <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px;font-size:13px;color:var(--gray-600);line-height:1.5;">
+          "Your value prop was solid but you spoke for about 45 seconds without pausing. Try the 'talk for 15 seconds, then ask a question' rule. Also, you didn't ask for a next step at the end — always have a clear CTA ready."
+        </div>
+      </div>
+
+      <!-- AI Synthesis Nudge -->
+      <div class="nudge nudge-tip" style="margin-top:4px;">
+        <div class="nudge-icon">🤖</div>
+        <div class="nudge-body">
+          <strong>Pattern from your reviews:</strong> Both Aisha and Raj noted you could <strong>ask more questions</strong> and <strong>shorten your speaking turns</strong>. I've designed a focused AI roleplay that forces you to ask a question every 15 seconds.
+          <div class="nudge-cta" onclick="showScreen('coach')">Try the "Listen More" drill →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━ SCREEN: OUTLET TRAININGS ━━━━━━ -->
+  <div class="screen" id="screen-outlets">
+    <div style="background:linear-gradient(135deg,#0F766E,#0D9488);color:white;padding:20px;border-radius:0 0 24px 24px;">
+      <div style="font-size:12px;opacity:0.8;text-transform:uppercase;letter-spacing:0.5px;">Outlet-Specific Training</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0;">Key Account Playbooks</div>
+      <div style="font-size:13px;opacity:0.85;">Specialized training for your assigned high-value outlets & retailers</div>
+    </div>
+
+    <div class="section">
+      <!-- Assigned Outlets -->
+      <div class="card-header" style="margin-top:4px;">
+        <div class="card-title">🏢 My Assigned Outlets</div>
+        <div class="text-xs text-muted">3 active</div>
+      </div>
+
+      <!-- Outlet 1: Walmart -->
+      <div class="card" style="border-left:4px solid #0071DC;cursor:pointer;" onclick="showOutletDetail()">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:52px;height:52px;border-radius:12px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🏪</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-weight:700;font-size:16px;">Walmart</div>
+              <span class="tag tag-primary" style="font-size:10px;">Tier 1</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Enterprise Retail · 8 modules · 2 AI scenarios</div>
+            <div class="progress-bar mt-8" style="height:6px;">
+              <div class="progress-fill" style="width:75%;background:#0071DC;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+              <span style="color:var(--gray-500);">6 of 8 modules complete</span>
+              <span style="color:#0071DC;font-weight:700;">75%</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+          <span class="tag tag-success" style="font-size:10px;">✅ Buyer Personas</span>
+          <span class="tag tag-success" style="font-size:10px;">✅ Procurement Process</span>
+          <span class="tag tag-warning" style="font-size:10px;">🔄 Vendor Portal</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-500);font-size:10px;">🔒 Category Review Prep</span>
+        </div>
+      </div>
+
+      <!-- Outlet 2: Costco -->
+      <div class="card" style="border-left:4px solid #E31837;cursor:pointer;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:52px;height:52px;border-radius:12px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🏬</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-weight:700;font-size:16px;">Costco</div>
+              <span class="tag tag-danger" style="font-size:10px;">Tier 1</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Wholesale Club · 6 modules · 3 AI scenarios</div>
+            <div class="progress-bar mt-8" style="height:6px;">
+              <div class="progress-fill" style="width:50%;background:#E31837;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+              <span style="color:var(--gray-500);">3 of 6 modules complete</span>
+              <span style="color:#E31837;font-weight:700;">50%</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+          <span class="tag tag-success" style="font-size:10px;">✅ Membership Model</span>
+          <span class="tag tag-success" style="font-size:10px;">✅ Kirkland Strategy</span>
+          <span class="tag tag-warning" style="font-size:10px;">🔄 Roadshow Pitch</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-500);font-size:10px;">🔒 Buyer Negotiation</span>
+        </div>
+      </div>
+
+      <!-- Outlet 3: Target -->
+      <div class="card" style="border-left:4px solid #CC0000;cursor:pointer;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:52px;height:52px;border-radius:12px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🎯</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-weight:700;font-size:16px;">Target</div>
+              <span class="tag tag-warning" style="font-size:10px;">Tier 2</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Mass Retail · 5 modules · 2 AI scenarios</div>
+            <div class="progress-bar mt-8" style="height:6px;">
+              <div class="progress-fill" style="width:20%;background:#CC0000;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+              <span style="color:var(--gray-500);">1 of 5 modules complete</span>
+              <span style="color:#CC0000;font-weight:700;">20%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deadline Nudge -->
+      <div class="nudge nudge-urgency">
+        <div class="nudge-icon">📅</div>
+        <div class="nudge-body">
+          <strong>Costco category review in 18 days.</strong> You still need to finish "Roadshow Pitch" and "Buyer Negotiation" modules. At 30 min/day, you'll be ready with 4 days to spare.
+          <div class="nudge-cta" onclick="showScreen('coach')">Start Costco prep →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Certification Proximity Nudge -->
+      <div class="nudge nudge-success">
+        <div class="nudge-icon">🏆</div>
+        <div class="nudge-body">
+          <strong>2 modules from Walmart Certified!</strong> Finish "Vendor Portal" and the final AI roleplay to earn your certification. Certified reps get assigned to more high-value accounts.
+          <div class="nudge-cta">Complete Vendor Portal →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- Manager Check-in Nudge -->
+      <div class="nudge nudge-social">
+        <div class="nudge-icon">💬</div>
+        <div class="nudge-body">
+          <strong>Sarah (your manager) asked:</strong> "How's the Walmart Vendor Portal module going? Let me know if you need access to the sandbox environment."
+          <div class="nudge-cta">Reply to Sarah →</div>
+        </div>
+        <button class="nudge-dismiss" onclick="this.parentElement.style.display='none'">✕</button>
+      </div>
+
+      <!-- AI Suggestion -->
+      <div class="ai-suggestion" onclick="showScreen('coach')">
+        <div class="ai-icon">🤖</div>
+        <div class="ai-text">
+          <div class="ai-label">AI Outlet Intel</div>
+          <div class="ai-msg">Costco's Q2 category review is in 3 weeks. I recommend completing the <strong>"Roadshow Pitch"</strong> module and running the AI roleplay <strong>"Costco Buyer: New SKU Pitch"</strong> before then.</div>
+        </div>
+      </div>
+
+      <!-- Expanded Outlet Detail -->
+      <div class="card-header mt-12">
+        <div class="card-title">📋 Walmart — Training Modules</div>
+        <div class="card-link">Collapse ↑</div>
+      </div>
+
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">🏢</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Buyer Personas & Org Structure</div>
+          <div class="mod-sub">Interactive · Who's who at Bentonville · 25 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">📦</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Procurement & Vendor Onboarding</div>
+          <div class="mod-sub">Process guide · Retail Link, OTIF, SQEP · 35 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">💰</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Pricing & Margin Expectations</div>
+          <div class="mod-sub">Case study · EDLP strategy · 30 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">📊</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Retail Link Data & Analytics</div>
+          <div class="mod-sub">Hands-on Lab · Reading sell-through data · 40 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">🤖</div>
+        <div class="module-info">
+          <div class="mod-title">AI Roleplay: Walmart Buyer — Line Review</div>
+          <div class="mod-sub">AI Scenario · Defend shelf space · 20 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card completed">
+        <div class="module-icon" style="background:#D1FAE5;">📈</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Joint Business Planning (JBP)</div>
+          <div class="mod-sub">Framework + template · Annual planning · 35 min</div>
+        </div>
+        <div class="module-status">✅</div>
+      </div>
+      <div class="module-card current">
+        <div class="module-icon" style="background:#EEF2FF;">🖥️</div>
+        <div class="module-info">
+          <div class="mod-title">Walmart Vendor Portal & OTIF Compliance</div>
+          <div class="mod-sub">Hands-on Lab · System walkthrough · 45 min</div>
+          <div class="mod-progress"><div class="fill" style="width:40%;background:var(--primary);"></div></div>
+        </div>
+        <div class="module-status" style="color:var(--primary);font-weight:700;font-size:13px;">40%</div>
+      </div>
+      <div class="module-card locked">
+        <div class="module-icon" style="background:var(--gray-100);">🤖</div>
+        <div class="module-info">
+          <div class="mod-title">AI Roleplay: Walmart Category Review Prep</div>
+          <div class="mod-sub">AI Scenario · Present growth plan to category manager · 25 min</div>
+        </div>
+        <div class="module-status">🔒</div>
+      </div>
+
+      <!-- Certification -->
+      <div class="milestone-card" style="margin-top:8px;">
+        <div class="mile-icon">🏆</div>
+        <div class="mile-title">Walmart Account Certified</div>
+        <div class="mile-sub">Complete all 8 modules + pass assessment (80%+)</div>
+      </div>
+
+      <!-- Other Available Outlets -->
+      <div class="card-header mt-12">
+        <div class="card-title">🔍 Other Available Outlet Trainings</div>
+      </div>
+      <div class="card" style="opacity:0.7;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:20px;">🏪</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Kroger</div>
+            <div style="font-size:12px;color:var(--gray-500);">Grocery · 5 modules</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Request Access</button>
+        </div>
+      </div>
+      <div class="card" style="opacity:0.7;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:20px;">💊</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">CVS Health</div>
+            <div style="font-size:12px;color:var(--gray-500);">Pharmacy & Retail · 6 modules</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Request Access</button>
+        </div>
+      </div>
+      <div class="card" style="opacity:0.7;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:20px;">🛒</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Amazon Retail</div>
+            <div style="font-size:12px;color:var(--gray-500);">E-Commerce · 7 modules</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Request Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════ BOTTOM NAV ═══════ -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="showScreen('home')">
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" onclick="showScreen('paths')">
+    <span class="nav-icon">📚</span>
+    <span>Learn</span>
+  </div>
+  <div class="nav-item ai-coach" onclick="showScreen('coach')">
+    <div class="nav-icon">🤖</div>
+    <span>AI Coach</span>
+  </div>
+  <div class="nav-item" onclick="showScreen('outlets')">
+    <span class="nav-icon">🏢</span>
+    <span>Outlets</span>
+  </div>
+  <div class="nav-item" onclick="showScreen('progress')">
+    <span class="nav-icon">📊</span>
+    <span>Progress</span>
+  </div>
+</nav>
+
+<script>
+// ── Screen Navigation ──
+function showScreen(id) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+
+  // Show target screen
+  var target = document.getElementById('screen-' + id);
+  if (target) {
+    target.classList.add('active');
+  }
+
+  // Update bottom nav highlighting
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  var navMap = {home:0, paths:1, coach:2, outlets:3, progress:4};
+  // Quiz and peer-review are sub-screens of Home, so highlight Home
+  var navId = id;
+  if (id === 'quiz' || id === 'peer-review' || id === 'kb') { navId = 'home'; }
+  if (navMap[navId] !== undefined) {
+    document.querySelectorAll('.nav-item')[navMap[navId]].classList.add('active');
+  }
+
+  // Reset coach view when navigating to coach
+  if (id === 'coach') {
+    document.getElementById('scenarios-list').classList.remove('hidden');
+    var sv = document.getElementById('scenario-view');
+    sv.classList.remove('active');
+    sv.style.display = 'none';
+  }
+
+  window.scrollTo(0, 0);
+}
+
+// ── AI Coach Scenarios ──
+function startScenario() {
+  document.getElementById('scenarios-list').classList.add('hidden');
+  document.getElementById('scenario-view').style.display = 'block';
+  document.getElementById('scenario-view').classList.add('active');
+}
+
+function exitScenario() {
+  document.getElementById('scenarios-list').classList.remove('hidden');
+  document.getElementById('scenario-view').style.display = 'none';
+  document.getElementById('scenario-view').classList.remove('active');
+}
+
+// ── Progress Tabs ──
+function showProgressTab(el, tabId) {
+  document.querySelectorAll('.tab-pill').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  document.querySelectorAll('.progress-tab-content').forEach(function(t) { t.style.display = 'none'; });
+  document.getElementById(tabId).style.display = 'block';
+}
+
+// ── Quiz: Select an answer ──
+function selectQuiz(el) {
+  // Deselect all options within the same question card
+  var parent = el.closest('.quiz-question-card');
+  parent.querySelectorAll('.quiz-option').forEach(function(opt) { opt.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+// ── Peer Review: Star rating ──
+function rateStars(clickedStar, rating) {
+  var container = clickedStar.closest('.review-stars');
+  var stars = container.querySelectorAll('.star');
+  stars.forEach(function(star, i) {
+    if (i < rating) {
+      star.classList.add('filled');
+      star.classList.remove('empty');
+    } else {
+      star.classList.remove('filled');
+      star.classList.add('empty');
+    }
+  });
+}
+
+// ── KB category toggle ──
+document.querySelectorAll('.kb-cat-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.kb-cat-item').forEach(function(i) { i.classList.remove('active'); });
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

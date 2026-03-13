@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesCode AI — Manager Dashboard</title>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #818CF8;
+    --primary-dark: #3730A3;
+    --primary-50: #EEF2FF;
+    --ai-purple: #7C3AED;
+    --ai-purple-light: #A78BFA;
+    --ai-purple-50: #EDE9FE;
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --success-dark: #065F46;
+    --warning: #F59E0B;
+    --warning-light: #FEF3C7;
+    --warning-dark: #92400E;
+    --danger: #EF4444;
+    --danger-light: #FEE2E2;
+    --danger-dark: #991B1B;
+    --info: #3B82F6;
+    --info-light: #DBEAFE;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    --sidebar-width: 250px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ══════════════════════════════════
+     SIDEBAR
+  ══════════════════════════════════ */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--gray-900) 0%, var(--gray-800) 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 200;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--ai-purple));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .sidebar-logo .logo-text {
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .sidebar-logo .logo-sub {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 1px;
+  }
+
+  .sidebar-section {
+    padding: 16px 12px 8px;
+  }
+  .sidebar-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    padding: 0 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    text-decoration: none;
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.06); color: white; }
+  .nav-link.active {
+    background: rgba(79,70,229,0.2);
+    color: white;
+  }
+  .nav-link .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-link .badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--ai-purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .sidebar-user .user-info { flex: 1; }
+  .sidebar-user .user-name { font-weight: 600; font-size: 13px; }
+  .sidebar-user .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ══════════════════════════════════
+     MAIN AREA
+  ══════════════════════════════════ */
+  .main-area {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; }
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .top-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    width: 280px;
+  }
+  .top-search input {
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 13px;
+    flex: 1;
+    color: var(--gray-700);
+  }
+  .top-search .search-icon { color: var(--gray-400); font-size: 15px; }
+  .notif-icon {
+    position: relative;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .notif-icon .dot {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 8px; height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  /* Content */
+  .content { padding: 24px 28px; }
+
+  /* ══════════════════════════════════
+     SHARED COMPONENTS
+  ══════════════════════════════════ */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .card-title { font-weight: 700; font-size: 16px; }
+  .card-subtitle { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+  .card-link {
+    font-size: 13px;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+  .stat-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .stat-info { flex: 1; }
+  .stat-label { font-size: 13px; color: var(--gray-500); font-weight: 500; }
+  .stat-value { font-size: 28px; font-weight: 800; margin-top: 4px; color: var(--gray-900); }
+  .stat-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .stat-change.up { color: var(--success-dark); background: var(--success-light); }
+  .stat-change.down { color: var(--danger-dark); background: var(--danger-light); }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-success { background: var(--success-light); color: var(--success-dark); }
+  .tag-warning { background: var(--warning-light); color: var(--warning-dark); }
+  .tag-danger { background: var(--danger-light); color: var(--danger-dark); }
+  .tag-primary { background: var(--primary-50); color: var(--primary); }
+  .tag-ai { background: var(--ai-purple-50); color: var(--ai-purple); }
+  .tag-info { background: var(--info-light); color: #1E40AF; }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-ai { background: linear-gradient(135deg, var(--ai-purple), var(--primary)); color: white; }
+  .btn-outline { background: white; color: var(--gray-700); border: 1.5px solid var(--gray-200); }
+  .btn-outline:hover { border-color: var(--gray-300); background: var(--gray-50); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-danger-outline { background: white; color: var(--danger); border: 1.5px solid var(--danger-light); }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  /* ── AI Insight Box ── */
+  .ai-insight {
+    background: linear-gradient(135deg, var(--ai-purple-50), var(--primary-50));
+    border: 1.5px solid var(--ai-purple-light);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .ai-insight .ai-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--ai-purple), var(--primary));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .ai-insight .ai-label {
+    font-size: 11px;
+    color: var(--ai-purple);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .ai-insight .ai-text {
+    font-size: 14px;
+    color: var(--gray-700);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .ai-insight .ai-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* ══════════════════════════════════
+     TABLE
+  ══════════════════════════════════ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+    padding: 12px 14px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  td {
+    padding: 14px;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  tr:hover td { background: var(--gray-50); }
+  .rep-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rep-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .rep-name { font-weight: 600; }
+  .rep-sub { font-size: 12px; color: var(--gray-500); }
+
+  /* ══════════════════════════════════
+     MINI BAR CHART (CSS-only)
+  ══════════════════════════════════ */
+  .mini-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+  }
+  .mini-bar {
+    width: 8px;
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s;
+  }
+
+  /* ══════════════════════════════════
+     HEATMAP
+  ══════════════════════════════════ */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 100px repeat(7, 1fr);
+    gap: 4px;
+    font-size: 12px;
+  }
+  .heatmap-label {
+    font-weight: 600;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+  }
+  .heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    min-height: 36px;
+  }
+  .hm-high { background: var(--success); }
+  .hm-mid { background: var(--warning); }
+  .hm-low { background: var(--danger); }
+  .hm-none { background: var(--gray-200); color: var(--gray-400); }
+  .heatmap-header { font-size: 11px; color: var(--gray-500); text-align: center; font-weight: 600; }
+
+  /* ══════════════════════════════════
+     TIMELINE
+  ══════════════════════════════════ */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gray-200);
+  }
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  .timeline-item.success::before { background: var(--success); box-shadow: 0 0 0 2px #6EE7B7; }
+  .timeline-item.warning::before { background: var(--warning); box-shadow: 0 0 0 2px #FDE68A; }
+  .timeline-item.ai::before { background: var(--ai-purple); box-shadow: 0 0 0 2px var(--ai-purple-light); }
+  .timeline-time { font-size: 11px; color: var(--gray-400); font-weight: 600; }
+  .timeline-title { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .timeline-desc { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ══════════════════════════════════
+     TAB PILLS
+  ══════════════════════════════════ */
+  .tab-pills {
+    display: inline-flex;
+    gap: 4px;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+  }
+  .tab-pill {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-pill.active {
+    background: white;
+    color: var(--gray-800);
+    box-shadow: var(--shadow);
+  }
+
+  /* ══════════════════════════════════
+     SKILL BAR
+  ══════════════════════════════════ */
+  .skill-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .skill-bar .sk-name { width: 110px; font-size: 13px; font-weight: 600; color: var(--gray-600); }
+  .skill-bar .sk-track { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+  .skill-bar .sk-fill { height: 100%; border-radius: 5px; }
+  .skill-bar .sk-val { width: 40px; font-size: 13px; font-weight: 700; text-align: right; }
+
+  /* ══════════════════════════════════
+     MODAL OVERLAY
+  ══════════════════════════════════ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    width: 680px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .modal-title { font-size: 20px; font-weight: 700; }
+  .modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--gray-400);
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+
+  /* ══════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════ */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .screen.active > * { animation: fadeIn 0.3s ease; }
+
+  /* ══════════════════════════════════
+     PATH BUILDER
+  ══════════════════════════════════ */
+  .path-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .path-card:hover { box-shadow: var(--shadow-md); }
+  .path-card.active-path { border-left-color: var(--success); }
+  .path-card.draft-path { border-left-color: var(--warning); }
+
+  .module-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    background: white;
+  }
+  .module-list-item .drag-handle {
+    color: var(--gray-400);
+    cursor: grab;
+    font-size: 16px;
+  }
+
+  /* Content Library Item */
+  .content-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    transition: all 0.2s;
+    background: white;
+  }
+  .content-item:hover { border-color: var(--primary-light); box-shadow: var(--shadow); }
+  .content-icon {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .content-info { flex: 1; }
+  .content-info .c-title { font-weight: 600; font-size: 14px; }
+  .content-info .c-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .content-info .c-meta { display: flex; gap: 12px; margin-top: 6px; }
+  .content-info .c-meta span { font-size: 11px; color: var(--gray-400); display: flex; align-items: center; gap: 3px; }
+  .content-actions { display: flex; gap: 6px; }
+
+  /* Donut chart */
+  .donut-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+  }
+  .donut-center .val { font-size: 24px; font-weight: 800; }
+  .donut-center .label { font-size: 11px; color: var(--gray-500); }
+</style>
+</head>
+<body>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">SalesCode AI</div>
+      <div class="logo-sub">Manager Portal</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Overview</div>
+    <div class="nav-link active" onclick="showScreen('overview')">
+      <span class="nav-icon">📊</span> Team Dashboard
+    </div>
+    <div class="nav-link" onclick="showScreen('reps')">
+      <span class="nav-icon">👥</span> My Reps
+      <span class="badge">2</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Coaching</div>
+    <div class="nav-link" onclick="showScreen('ai-analytics')">
+      <span class="nav-icon">🤖</span> AI Coach Analytics
+    </div>
+    <div class="nav-link" onclick="showScreen('paths-mgr')">
+      <span class="nav-icon">🛤️</span> Learning Paths
+    </div>
+    <div class="nav-link" onclick="showScreen('content')">
+      <span class="nav-icon">📚</span> Content Library
+    </div>
+    <div class="nav-link" onclick="showScreen('outlets-mgr')">
+      <span class="nav-icon">🏢</span> Outlet Trainings
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <div class="nav-link" onclick="showScreen('assessments')">
+      <span class="nav-icon">📝</span> Assessments
+    </div>
+    <div class="nav-link" onclick="showScreen('settings')">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">SC</div>
+      <div class="user-info">
+        <div class="user-name">Sarah Chen</div>
+        <div class="user-role">Sales Manager · Enterprise</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════ MAIN AREA ═══════ -->
+<div class="main-area">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="page-title" id="page-title">Team Dashboard</div>
+    </div>
+    <div class="top-bar-right">
+      <div class="top-search">
+        <span class="search-icon">🔍</span>
+        <input placeholder="Search reps, courses, content..." />
+      </div>
+      <div class="notif-icon">🔔<div class="dot"></div></div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ━━━━━━━━ SCREEN: TEAM OVERVIEW ━━━━━━━━ -->
+    <div class="screen active" id="screen-overview">
+
+      <!-- AI Insight -->
+      <div class="ai-insight">
+        <div class="ai-icon">🤖</div>
+        <div style="flex:1;">
+          <div class="ai-label">AI Weekly Digest</div>
+          <div class="ai-text">
+            Your team's overall readiness score is <strong>74%</strong> (up 6pts). <strong>Maya Kumar</strong> and <strong>Tyler Wong</strong> are progressing fast — consider fast-tracking them to Week 3 content. <strong>Sam Miller</strong> and <strong>Lisa Park</strong> have stalled on objection handling modules — they may benefit from 1:1 coaching or additional AI roleplay sessions.
+          </div>
+          <div class="ai-actions">
+            <button class="btn btn-ai btn-sm">View Detailed Insights</button>
+            <button class="btn btn-outline btn-sm">Dismiss</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--primary-50);">👥</div>
+          <div class="stat-info">
+            <div class="stat-label">Active Reps</div>
+            <div class="stat-value">8</div>
+            <div class="stat-change up">↑ 2 this month</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-light);">📈</div>
+          <div class="stat-info">
+            <div class="stat-label">Avg Completion</div>
+            <div class="stat-value">67%</div>
+            <div class="stat-change up">↑ 12% vs last cohort</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--ai-purple-50);">🤖</div>
+          <div class="stat-info">
+            <div class="stat-label">AI Practice Sessions</div>
+            <div class="stat-value">142</div>
+            <div class="stat-change up">↑ 34 this week</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-light);">⏱️</div>
+          <div class="stat-info">
+            <div class="stat-label">Avg Ramp Time</div>
+            <div class="stat-value">4.2w</div>
+            <div class="stat-change up">↑ 1.3w faster</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Team Readiness Table -->
+        <div class="card" style="grid-column:1/3;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Team Readiness Overview</div>
+              <div class="card-subtitle">Current cohort onboarding progress</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm">Export</button>
+              <button class="btn btn-primary btn-sm">+ Add Rep</button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Rep</th>
+                <th>Path Progress</th>
+                <th>AI Coach Score</th>
+                <th>Streak</th>
+                <th>Status</th>
+                <th>Risk</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="showRepDetail('aisha')">
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#6366F1;">AJ</div>
+                    <div><div class="rep-name">Aisha Johnson</div><div class="rep-sub">Started Feb 10 · Week 4</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:85%;background:var(--success);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">85%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--success);">88</span></td>
+                <td>🔥 18d</td>
+                <td><span class="tag tag-success">On Track</span></td>
+                <td><span class="tag tag-success">Low</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+              <tr onclick="showRepDetail('raj')">
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#EC4899;">RC</div>
+                    <div><div class="rep-name">Raj Chopra</div><div class="rep-sub">Started Feb 10 · Week 4</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:78%;background:var(--success);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">78%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--success);">82</span></td>
+                <td>🔥 14d</td>
+                <td><span class="tag tag-success">On Track</span></td>
+                <td><span class="tag tag-success">Low</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+              <tr onclick="showRepDetail('tyler')">
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#F59E0B;">TW</div>
+                    <div><div class="rep-name">Tyler Wong</div><div class="rep-sub">Started Feb 10 · Week 3</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:62%;background:var(--primary);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">62%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--primary);">76</span></td>
+                <td>🔥 11d</td>
+                <td><span class="tag tag-primary">Progressing</span></td>
+                <td><span class="tag tag-success">Low</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+              <tr onclick="showRepDetail('maya')">
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#4F46E5;">MK</div>
+                    <div><div class="rep-name">Maya Kumar</div><div class="rep-sub">Started Feb 17 · Week 2</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:35%;background:var(--primary);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">35%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--primary);">78</span></td>
+                <td>🔥 12d</td>
+                <td><span class="tag tag-primary">Progressing</span></td>
+                <td><span class="tag tag-success">Low</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#10B981;">SM</div>
+                    <div><div class="rep-name">Sam Miller</div><div class="rep-sub">Started Feb 17 · Week 2</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:28%;background:var(--warning);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">28%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--warning);">61</span></td>
+                <td>🔥 7d</td>
+                <td><span class="tag tag-warning">Slow</span></td>
+                <td><span class="tag tag-warning">Medium</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rep-cell">
+                    <div class="rep-avatar" style="background:#8B5CF6;">LP</div>
+                    <div><div class="rep-name">Lisa Park</div><div class="rep-sub">Started Feb 24 · Week 1</div></div>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:15%;background:var(--danger);"></div></div>
+                    <span style="font-weight:700;font-size:13px;">15%</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:700;color:var(--danger);">48</span></td>
+                <td>5d</td>
+                <td><span class="tag tag-danger">Behind</span></td>
+                <td><span class="tag tag-danger">High</span></td>
+                <td><span class="card-link" style="font-size:12px;">View →</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Engagement Heatmap -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Weekly Engagement Heatmap</div>
+              <div class="card-subtitle">Activity levels by rep · this week</div>
+            </div>
+          </div>
+          <div class="heatmap-grid">
+            <div></div>
+            <div class="heatmap-header">Mon</div>
+            <div class="heatmap-header">Tue</div>
+            <div class="heatmap-header">Wed</div>
+            <div class="heatmap-header">Thu</div>
+            <div class="heatmap-header">Fri</div>
+            <div class="heatmap-header">Sat</div>
+            <div class="heatmap-header">Sun</div>
+
+            <div class="heatmap-label">Aisha J.</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-high">4</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-high">5</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+
+            <div class="heatmap-label">Raj C.</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-high">4</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+
+            <div class="heatmap-label">Tyler W.</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+
+            <div class="heatmap-label">Maya K.</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-high">3</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-high">4</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+
+            <div class="heatmap-label">Sam M.</div>
+            <div class="heatmap-cell hm-low">1</div>
+            <div class="heatmap-cell hm-none">0</div>
+            <div class="heatmap-cell hm-low">1</div>
+            <div class="heatmap-cell hm-mid">2</div>
+            <div class="heatmap-cell hm-low">1</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+
+            <div class="heatmap-label">Lisa P.</div>
+            <div class="heatmap-cell hm-none">0</div>
+            <div class="heatmap-cell hm-low">1</div>
+            <div class="heatmap-cell hm-none">0</div>
+            <div class="heatmap-cell hm-low">1</div>
+            <div class="heatmap-cell hm-none">0</div>
+            <div class="heatmap-cell hm-none">–</div>
+            <div class="heatmap-cell hm-none">–</div>
+          </div>
+        </div>
+
+        <!-- At Risk & Actions -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚠️ Attention Required</div>
+              <div class="card-subtitle">AI-detected risks & recommendations</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;padding:14px;background:var(--danger-light);border-radius:var(--radius-sm);border-left:4px solid var(--danger);">
+            <div style="font-weight:700;font-size:14px;color:var(--danger-dark);">Lisa Park — High Risk</div>
+            <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">Only completed 15% of Week 1 content. Zero AI practice sessions this week. Failed foundation quiz (score: 48%).</div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn btn-sm btn-primary">Schedule 1:1</button>
+              <button class="btn btn-sm btn-outline">Assign AI Practice</button>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;padding:14px;background:var(--warning-light);border-radius:var(--radius-sm);border-left:4px solid var(--warning);">
+            <div style="font-weight:700;font-size:14px;color:var(--warning-dark);">Sam Miller — Medium Risk</div>
+            <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">Stuck on objection handling for 4 days. Low engagement pattern detected. AI coach score dropped from 71 → 61.</div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn btn-sm btn-primary">Send Encouragement</button>
+              <button class="btn btn-sm btn-outline">Adjust Path</button>
+            </div>
+          </div>
+          <div style="padding:14px;background:var(--success-light);border-radius:var(--radius-sm);border-left:4px solid var(--success);">
+            <div style="font-weight:700;font-size:14px;color:var(--success-dark);">Aisha Johnson — Fast Track</div>
+            <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">Consistently outperforming peers. AI recommends accelerating to advanced modules and assigning mentorship role.</div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn btn-sm btn-ai">Fast-Track Path</button>
+              <button class="btn btn-sm btn-outline">Make Mentor</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: MY REPS (Detail View) ━━━━━━━━ -->
+    <div class="screen" id="screen-reps">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+        <span class="card-link" onclick="showScreen('overview')" style="font-size:14px;">← Back to Dashboard</span>
+      </div>
+
+      <!-- Rep Header -->
+      <div class="card" style="display:flex;gap:20px;align-items:center;">
+        <div class="rep-avatar" style="background:#4F46E5;width:64px;height:64px;font-size:22px;">MK</div>
+        <div style="flex:1;">
+          <div style="font-size:22px;font-weight:800;">Maya Kumar</div>
+          <div style="font-size:14px;color:var(--gray-500);margin-top:2px;">New Rep · Enterprise SaaS Onboarding · Started Feb 17</div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <span class="tag tag-primary">Week 2</span>
+            <span class="tag tag-success">On Track</span>
+            <span class="tag tag-ai">🤖 AI Score: 78</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm">Message</button>
+          <button class="btn btn-primary btn-sm">Schedule 1:1</button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:0;">
+        <div class="stat-card">
+          <div class="stat-info" style="text-align:center;width:100%;">
+            <div class="stat-label">Path Progress</div>
+            <div class="stat-value">35%</div>
+            <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:35%;background:var(--primary);"></div></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info" style="text-align:center;width:100%;">
+            <div class="stat-label">AI Practice Sessions</div>
+            <div class="stat-value">18</div>
+            <div class="stat-change up">↑ 5 this week</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info" style="text-align:center;width:100%;">
+            <div class="stat-label">Avg Quiz Score</div>
+            <div class="stat-value">84%</div>
+            <div class="stat-change up">↑ 8% trend</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info" style="text-align:center;width:100%;">
+            <div class="stat-label">Time to Ready</div>
+            <div class="stat-value">~3.5w</div>
+            <div class="stat-change up">↑ Ahead of plan</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px;">
+        <!-- Skills Breakdown -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Skill Proficiency</div>
+          <div class="skill-bar">
+            <div class="sk-name">Prospecting</div>
+            <div class="sk-track"><div class="sk-fill" style="width:82%;background:var(--success);"></div></div>
+            <div class="sk-val" style="color:var(--success);">82%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Discovery</div>
+            <div class="sk-track"><div class="sk-fill" style="width:72%;background:var(--primary);"></div></div>
+            <div class="sk-val" style="color:var(--primary);">72%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Pitching</div>
+            <div class="sk-track"><div class="sk-fill" style="width:80%;background:var(--primary);"></div></div>
+            <div class="sk-val" style="color:var(--primary);">80%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Objections</div>
+            <div class="sk-track"><div class="sk-fill" style="width:55%;background:var(--warning);"></div></div>
+            <div class="sk-val" style="color:var(--warning);">55%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Negotiation</div>
+            <div class="sk-track"><div class="sk-fill" style="width:45%;background:var(--danger);"></div></div>
+            <div class="sk-val" style="color:var(--danger);">45%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Closing</div>
+            <div class="sk-track"><div class="sk-fill" style="width:60%;background:var(--warning);"></div></div>
+            <div class="sk-val" style="color:var(--warning);">60%</div>
+          </div>
+          <div class="skill-bar">
+            <div class="sk-name">Product</div>
+            <div class="sk-track"><div class="sk-fill" style="width:88%;background:var(--success);"></div></div>
+            <div class="sk-val" style="color:var(--success);">88%</div>
+          </div>
+
+          <div class="ai-insight" style="margin-top:16px;">
+            <div class="ai-icon" style="width:32px;height:32px;font-size:16px;">🤖</div>
+            <div style="flex:1;">
+              <div class="ai-label">AI Gap Analysis</div>
+              <div class="ai-text" style="font-size:13px;">Negotiation and objection handling are the primary gaps. Recommend assigning "Pricing Negotiation: Enterprise" and "We Already Have a Vendor" AI roleplays this week.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Recent Activity</div>
+          <div class="timeline">
+            <div class="timeline-item success">
+              <div class="timeline-time">Today · 10:30 AM</div>
+              <div class="timeline-title">Completed: Cold Call Framework</div>
+              <div class="timeline-desc">Module 6 of 8 · Quiz score: 88%</div>
+            </div>
+            <div class="timeline-item ai">
+              <div class="timeline-time">Today · 9:15 AM</div>
+              <div class="timeline-title">AI Roleplay: Cold Call VP of Sales</div>
+              <div class="timeline-desc">Score: 82 · Duration: 12 min · 3rd attempt</div>
+            </div>
+            <div class="timeline-item success">
+              <div class="timeline-time">Yesterday · 3:40 PM</div>
+              <div class="timeline-title">Completed: LinkedIn Social Selling</div>
+              <div class="timeline-desc">Module 7 of 8 · Quiz score: 91%</div>
+            </div>
+            <div class="timeline-item ai">
+              <div class="timeline-time">Yesterday · 2:00 PM</div>
+              <div class="timeline-title">AI Roleplay: Discovery Call Mid-Market</div>
+              <div class="timeline-desc">Score: 74 · Duration: 18 min · Needs improvement on open-ended questions</div>
+            </div>
+            <div class="timeline-item warning">
+              <div class="timeline-time">Yesterday · 11:00 AM</div>
+              <div class="timeline-title">Quiz Retry: Objection Handling Basics</div>
+              <div class="timeline-desc">Score: 68% (2nd attempt, improved from 52%)</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">Mar 10 · 4:15 PM</div>
+              <div class="timeline-title">Viewed: Competitor Battle Card — SalesForce</div>
+              <div class="timeline-desc">Knowledge Base · Spent 8 min</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: AI COACHING ANALYTICS ━━━━━━━━ -->
+    <div class="screen" id="screen-ai-analytics">
+
+      <div class="ai-insight">
+        <div class="ai-icon">🤖</div>
+        <div style="flex:1;">
+          <div class="ai-label">AI Coaching Intelligence</div>
+          <div class="ai-text">
+            Your team completed <strong>142 AI practice sessions</strong> this week. The most common struggle area is <strong>objection handling</strong> — 4 of 6 reps score below 70% on competitive displacement scenarios. Consider hosting a team workshop on this topic.
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--ai-purple-50);">🎙️</div>
+          <div class="stat-info">
+            <div class="stat-label">Total Sessions</div>
+            <div class="stat-value">142</div>
+            <div class="stat-change up">↑ 31% vs last week</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-light);">📊</div>
+          <div class="stat-info">
+            <div class="stat-label">Avg AI Score</div>
+            <div class="stat-value">73</div>
+            <div class="stat-change up">↑ 5pts vs last week</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--info-light);">⏱️</div>
+          <div class="stat-info">
+            <div class="stat-label">Avg Session Time</div>
+            <div class="stat-value">14m</div>
+            <div class="stat-change up">↑ Optimal range</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-light);">🔄</div>
+          <div class="stat-info">
+            <div class="stat-label">Retry Rate</div>
+            <div class="stat-value">42%</div>
+            <div class="stat-change up">↑ Shows persistence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Scenario Performance -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Scenario Performance</div>
+              <div class="card-subtitle">Team average scores by scenario type</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">📞</span>
+                <div>
+                  <div style="font-weight:600;font-size:14px;">Cold Call</div>
+                  <div style="font-size:12px;color:var(--gray-500);">48 sessions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:79%;background:var(--success);"></div></div>
+                <span style="font-weight:700;font-size:14px;width:35px;text-align:right;color:var(--success);">79%</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">💬</span>
+                <div>
+                  <div style="font-weight:600;font-size:14px;">Discovery Call</div>
+                  <div style="font-size:12px;color:var(--gray-500);">36 sessions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:74%;background:var(--primary);"></div></div>
+                <span style="font-weight:700;font-size:14px;width:35px;text-align:right;color:var(--primary);">74%</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">🛡️</span>
+                <div>
+                  <div style="font-weight:600;font-size:14px;">Objection Handling</div>
+                  <div style="font-size:12px;color:var(--gray-500);">32 sessions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:58%;background:var(--danger);"></div></div>
+                <span style="font-weight:700;font-size:14px;width:35px;text-align:right;color:var(--danger);">58%</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">💰</span>
+                <div>
+                  <div style="font-weight:600;font-size:14px;">Pricing Negotiation</div>
+                  <div style="font-size:12px;color:var(--gray-500);">18 sessions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:62%;background:var(--warning);"></div></div>
+                <span style="font-weight:700;font-size:14px;width:35px;text-align:right;color:var(--warning);">62%</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">📊</span>
+                <div>
+                  <div style="font-weight:600;font-size:14px;">Product Demo</div>
+                  <div style="font-size:12px;color:var(--gray-500);">8 sessions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:71%;background:var(--primary);"></div></div>
+                <span style="font-weight:700;font-size:14px;width:35px;text-align:right;color:var(--primary);">71%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Struggles -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🔍 Common Struggle Patterns</div>
+              <div class="card-subtitle">AI-detected across all sessions</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;padding:14px;background:var(--gray-50);border-radius:var(--radius-sm);border-left:3px solid var(--danger);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700;font-size:14px;">Handling "already have a vendor"</div>
+              <span class="tag tag-danger">4 of 6 reps</span>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Reps tend to directly criticize the competitor instead of using curiosity-based reframing</div>
+          </div>
+          <div style="margin-bottom:14px;padding:14px;background:var(--gray-50);border-radius:var(--radius-sm);border-left:3px solid var(--warning);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700;font-size:14px;">Asking open-ended discovery questions</div>
+              <span class="tag tag-warning">3 of 6 reps</span>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Too many yes/no questions; not enough follow-up probing on pain points</div>
+          </div>
+          <div style="margin-bottom:14px;padding:14px;background:var(--gray-50);border-radius:var(--radius-sm);border-left:3px solid var(--warning);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700;font-size:14px;">Transitioning from rapport to business</div>
+              <span class="tag tag-warning">3 of 6 reps</span>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Spending too long on small talk or making abrupt transitions</div>
+          </div>
+          <div style="padding:14px;background:var(--gray-50);border-radius:var(--radius-sm);border-left:3px solid var(--primary);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700;font-size:14px;">Presenting ROI quantitatively</div>
+              <span class="tag tag-primary">2 of 6 reps</span>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Using vague value language instead of citing specific metrics and case studies</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-Rep AI Scores -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Individual AI Coaching Scores</div>
+            <div class="card-subtitle">Breakdown by skill area per rep</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Export Report</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Rep</th>
+              <th>Overall</th>
+              <th>Rapport</th>
+              <th>Discovery</th>
+              <th>Pitching</th>
+              <th>Objections</th>
+              <th>Closing</th>
+              <th>Sessions</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#6366F1;width:30px;height:30px;font-size:11px;">AJ</div><div class="rep-name">Aisha J.</div></div></td>
+              <td><strong style="color:var(--success);">88</strong></td>
+              <td>92</td><td>85</td><td>90</td><td>78</td><td>85</td>
+              <td>32</td>
+              <td><span class="stat-change up" style="font-size:11px;">↑ 6</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#EC4899;width:30px;height:30px;font-size:11px;">RC</div><div class="rep-name">Raj C.</div></div></td>
+              <td><strong style="color:var(--success);">82</strong></td>
+              <td>88</td><td>80</td><td>84</td><td>72</td><td>80</td>
+              <td>28</td>
+              <td><span class="stat-change up" style="font-size:11px;">↑ 4</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#4F46E5;width:30px;height:30px;font-size:11px;">MK</div><div class="rep-name">Maya K.</div></div></td>
+              <td><strong style="color:var(--primary);">78</strong></td>
+              <td>85</td><td>72</td><td>80</td><td>65</td><td>70</td>
+              <td>18</td>
+              <td><span class="stat-change up" style="font-size:11px;">↑ 8</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#F59E0B;width:30px;height:30px;font-size:11px;">TW</div><div class="rep-name">Tyler W.</div></div></td>
+              <td><strong style="color:var(--primary);">76</strong></td>
+              <td>80</td><td>78</td><td>75</td><td>68</td><td>72</td>
+              <td>24</td>
+              <td><span class="stat-change up" style="font-size:11px;">↑ 3</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#10B981;width:30px;height:30px;font-size:11px;">SM</div><div class="rep-name">Sam M.</div></div></td>
+              <td><strong style="color:var(--warning);">61</strong></td>
+              <td>70</td><td>58</td><td>65</td><td>48</td><td>55</td>
+              <td>12</td>
+              <td><span class="stat-change down" style="font-size:11px;">↓ 10</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#8B5CF6;width:30px;height:30px;font-size:11px;">LP</div><div class="rep-name">Lisa P.</div></div></td>
+              <td><strong style="color:var(--danger);">48</strong></td>
+              <td>55</td><td>42</td><td>50</td><td>38</td><td>40</td>
+              <td>6</td>
+              <td><span class="stat-change down" style="font-size:11px;">↓ 5</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: LEARNING PATHS MANAGEMENT ━━━━━━━━ -->
+    <div class="screen" id="screen-paths-mgr">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div>
+          <div class="tab-pills" style="margin-bottom:0;">
+            <div class="tab-pill active">Active Paths</div>
+            <div class="tab-pill">Templates</div>
+            <div class="tab-pill">Archived</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ai">🤖 AI Generate Path</button>
+          <button class="btn btn-primary">+ Create Path</button>
+        </div>
+      </div>
+
+      <div class="ai-insight">
+        <div class="ai-icon">🤖</div>
+        <div style="flex:1;">
+          <div class="ai-label">AI Path Optimization</div>
+          <div class="ai-text">
+            Based on completion data from the last 3 cohorts, I suggest <strong>moving "Objection Handling" earlier</strong> (from Week 3 to Week 2) — reps who practiced objections earlier had <strong>23% faster ramp times</strong>. I can auto-adjust the path for the next cohort.
+          </div>
+          <div class="ai-actions">
+            <button class="btn btn-ai btn-sm">Apply Optimization</button>
+            <button class="btn btn-outline btn-sm">See Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Path -->
+      <div class="path-card active-path">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:20px;">🚀</span>
+              <div style="font-size:18px;font-weight:700;">New Rep Onboarding — Enterprise SaaS</div>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">6 Weeks · 24 Modules · 3 Certifications · 12 AI Roleplays</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <span class="tag tag-success">Active</span>
+            <button class="btn btn-outline btn-sm">Edit</button>
+            <button class="btn btn-outline btn-sm">Duplicate</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:20px;">
+          <div style="flex:1;">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">Assigned: 6 reps · Avg completion: 50%</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:50%;background:var(--success);"></div></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 1: Foundations</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 2: Prospecting</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 3: Conversations</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 4: Demos & Pricing</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 5: Closing</span>
+          <span class="tag" style="background:var(--gray-100);color:var(--gray-600);">Week 6: Assessment</span>
+        </div>
+      </div>
+
+      <div class="path-card draft-path">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:20px;">🎯</span>
+              <div style="font-size:18px;font-weight:700;">Mid-Market Fast Track</div>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">4 Weeks · 16 Modules · 2 Certifications · 8 AI Roleplays</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <span class="tag tag-warning">Draft</span>
+            <button class="btn btn-outline btn-sm">Edit</button>
+            <button class="btn btn-primary btn-sm">Activate</button>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:10px;">
+          Condensed path for experienced hires transitioning to your product. AI-generated based on enterprise path with reduced foundational content.
+        </div>
+      </div>
+
+      <div class="path-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:20px;">⬆️</span>
+              <div style="font-size:18px;font-weight:700;">Advanced Skills — Existing Reps</div>
+            </div>
+            <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Ongoing · 12 Modules · Elective-based · 6 AI Roleplays</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <span class="tag tag-success">Active</span>
+            <button class="btn btn-outline btn-sm">Edit</button>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:10px;">
+          Continuous development path for reps who've completed onboarding. Covers advanced negotiation, multi-threading, and executive selling.
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: CONTENT LIBRARY ━━━━━━━━ -->
+    <div class="screen" id="screen-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div class="tab-pills" style="margin-bottom:0;">
+          <div class="tab-pill active">All Content</div>
+          <div class="tab-pill">Courses</div>
+          <div class="tab-pill">AI Scenarios</div>
+          <div class="tab-pill">Quizzes</div>
+          <div class="tab-pill">Resources</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ai btn-sm">🤖 AI Generate Content</button>
+          <button class="btn btn-primary btn-sm">+ Upload Content</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;">
+        <div class="top-search" style="flex:1;width:auto;">
+          <span class="search-icon">🔍</span>
+          <input placeholder="Search content library..." />
+        </div>
+        <select style="padding:8px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--gray-200);font-size:13px;color:var(--gray-600);background:white;">
+          <option>Sort: Recently Updated</option>
+          <option>Sort: Most Used</option>
+          <option>Sort: Alphabetical</option>
+        </select>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:#DBEAFE;">📹</div>
+        <div class="content-info">
+          <div class="c-title">Company & Product Overview</div>
+          <div class="c-sub">Video module with embedded quiz — covers product positioning, market, and mission</div>
+          <div class="c-meta">
+            <span>📹 Video · 45 min</span>
+            <span>👥 Used in 2 paths</span>
+            <span>📊 92% avg score</span>
+            <span>🕐 Updated 5d ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Edit</button>
+          <button class="btn btn-outline btn-sm">Preview</button>
+        </div>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:var(--ai-purple-50);">🤖</div>
+        <div class="content-info">
+          <div class="c-title">AI Scenario: "We Already Have a Vendor"</div>
+          <div class="c-sub">Competitive displacement objection handling — adaptive difficulty, real-time coaching</div>
+          <div class="c-meta">
+            <span>🤖 AI Roleplay · ~15 min</span>
+            <span>👥 Used in 1 path</span>
+            <span>📊 58% avg score</span>
+            <span>🕐 Updated 2d ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Configure</button>
+          <button class="btn btn-outline btn-sm">Try It</button>
+        </div>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:#FEF3C7;">📋</div>
+        <div class="content-info">
+          <div class="c-title">ICP & Buyer Personas Interactive Workshop</div>
+          <div class="c-sub">Drag-and-drop persona matching, scenario cards, and quiz</div>
+          <div class="c-meta">
+            <span>🎮 Interactive · 30 min</span>
+            <span>👥 Used in 2 paths</span>
+            <span>📊 88% avg score</span>
+            <span>🕐 Updated 1w ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Edit</button>
+          <button class="btn btn-outline btn-sm">Preview</button>
+        </div>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:var(--ai-purple-50);">🤖</div>
+        <div class="content-info">
+          <div class="c-title">AI Scenario: Cold Call VP of Sales</div>
+          <div class="c-sub">Practice getting past gatekeepers and booking meetings with senior stakeholders</div>
+          <div class="c-meta">
+            <span>🤖 AI Roleplay · ~10 min</span>
+            <span>👥 Used in 1 path</span>
+            <span>📊 79% avg score</span>
+            <span>🕐 Updated 3d ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Configure</button>
+          <button class="btn btn-outline btn-sm">Try It</button>
+        </div>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:#D1FAE5;">📝</div>
+        <div class="content-info">
+          <div class="c-title">Week 2 Assessment: Prospecting & Outreach</div>
+          <div class="c-sub">30-question assessment covering cold outreach, social selling, and discovery basics</div>
+          <div class="c-meta">
+            <span>📝 Quiz · 25 min</span>
+            <span>👥 Used in 1 path</span>
+            <span>📊 76% avg score</span>
+            <span>🕐 Updated 1w ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Edit</button>
+          <button class="btn btn-outline btn-sm">Preview</button>
+        </div>
+      </div>
+
+      <div class="content-item">
+        <div class="content-icon" style="background:#FCE7F3;">📹</div>
+        <div class="content-info">
+          <div class="c-title">Demo & Presentation Skills Masterclass</div>
+          <div class="c-sub">Video series with screen recording examples, do's/don'ts, and practice exercises</div>
+          <div class="c-meta">
+            <span>📹 Video · 60 min</span>
+            <span>👥 Used in 1 path</span>
+            <span>📊 84% avg score</span>
+            <span>🕐 Updated 2w ago</span>
+          </div>
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-outline btn-sm">Edit</button>
+          <button class="btn btn-outline btn-sm">Preview</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: OUTLET TRAINING MANAGEMENT ━━━━━━━━ -->
+    <div class="screen" id="screen-outlets-mgr">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div class="tab-pills" style="margin-bottom:0;">
+          <div class="tab-pill active">All Outlets</div>
+          <div class="tab-pill">Assignments</div>
+          <div class="tab-pill">Certifications</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ai btn-sm">🤖 AI Generate Outlet Training</button>
+          <button class="btn btn-primary btn-sm">+ Add Outlet</button>
+        </div>
+      </div>
+
+      <!-- AI Insight -->
+      <div class="ai-insight">
+        <div class="ai-icon">🤖</div>
+        <div style="flex:1;">
+          <div class="ai-label">AI Outlet Intelligence</div>
+          <div class="ai-text">
+            <strong>Costco's Q2 category review</strong> is in 3 weeks. Only 2 of 4 assigned reps have completed the "Roadshow Pitch" module. Consider sending a nudge or scheduling a group prep session. Also, <strong>Walmart</strong> has updated their vendor compliance rules — the OTIF module may need a content refresh.
+          </div>
+          <div class="ai-actions">
+            <button class="btn btn-ai btn-sm">Nudge Reps</button>
+            <button class="btn btn-outline btn-sm">Review OTIF Module</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#CCFBF1;">🏢</div>
+          <div class="stat-info">
+            <div class="stat-label">Active Outlets</div>
+            <div class="stat-value">6</div>
+            <div class="stat-change up">↑ 2 new this quarter</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-light);">✅</div>
+          <div class="stat-info">
+            <div class="stat-label">Certified Reps</div>
+            <div class="stat-value">14</div>
+            <div class="stat-change up">↑ 5 this month</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-light);">📊</div>
+          <div class="stat-info">
+            <div class="stat-label">Avg Completion</div>
+            <div class="stat-value">62%</div>
+            <div class="stat-change up">↑ 8% vs last month</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--danger-light);">⚠️</div>
+          <div class="stat-info">
+            <div class="stat-label">Expiring Certs</div>
+            <div class="stat-value">3</div>
+            <div class="stat-change down">↓ Need renewal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outlet Cards -->
+      <div class="grid-2">
+        <!-- Walmart -->
+        <div class="card" style="border-top:4px solid #0071DC;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div style="width:48px;height:48px;border-radius:12px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:24px;">🏪</div>
+              <div>
+                <div style="font-size:18px;font-weight:700;">Walmart</div>
+                <div style="font-size:12px;color:var(--gray-500);">Enterprise Retail · Tier 1</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-outline btn-sm">Edit</button>
+              <button class="btn btn-outline btn-sm">Assign</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">8</div>
+              <div style="font-size:11px;color:var(--gray-500);">Modules</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">4</div>
+              <div style="font-size:11px;color:var(--gray-500);">Assigned Reps</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--success);">2</div>
+              <div style="font-size:11px;color:var(--gray-500);">Certified</div>
+            </div>
+          </div>
+          <!-- Rep progress list -->
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Rep Progress</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#6366F1;">AJ</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Aisha J.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+            <span class="tag tag-success" style="font-size:9px;">Certified</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#EC4899;">RC</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Raj C.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+            <span class="tag tag-success" style="font-size:9px;">Certified</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#4F46E5;">MK</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Maya K.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:75%;background:var(--primary);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--primary);">75%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#F59E0B;">TW</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Tyler W.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:50%;background:var(--warning);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--warning);">50%</span>
+          </div>
+        </div>
+
+        <!-- Costco -->
+        <div class="card" style="border-top:4px solid #E31837;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div style="width:48px;height:48px;border-radius:12px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;font-size:24px;">🏬</div>
+              <div>
+                <div style="font-size:18px;font-weight:700;">Costco</div>
+                <div style="font-size:12px;color:var(--gray-500);">Wholesale Club · Tier 1</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-outline btn-sm">Edit</button>
+              <button class="btn btn-outline btn-sm">Assign</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">6</div>
+              <div style="font-size:11px;color:var(--gray-500);">Modules</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">4</div>
+              <div style="font-size:11px;color:var(--gray-500);">Assigned Reps</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--danger);">0</div>
+              <div style="font-size:11px;color:var(--gray-500);">Certified</div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Rep Progress</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#4F46E5;">MK</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Maya K.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:50%;background:var(--warning);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--warning);">50%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#F59E0B;">TW</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Tyler W.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:33%;background:var(--danger);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--danger);">33%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#10B981;">SM</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Sam M.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:16%;background:var(--danger);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--danger);">16%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#8B5CF6;">LP</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Lisa P.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:0%;background:var(--gray-300);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--gray-400);">0%</span>
+          </div>
+          <!-- Urgency alert -->
+          <div style="margin-top:12px;padding:10px;background:var(--warning-light);border-radius:var(--radius-sm);font-size:12px;color:var(--warning-dark);display:flex;align-items:center;gap:8px;">
+            <span>⚠️</span>
+            <span><strong>Q2 Category Review in 3 weeks</strong> — Only 2 of 4 reps started Roadshow module</span>
+          </div>
+        </div>
+
+        <!-- Target -->
+        <div class="card" style="border-top:4px solid #CC0000;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div style="width:48px;height:48px;border-radius:12px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;font-size:24px;">🎯</div>
+              <div>
+                <div style="font-size:18px;font-weight:700;">Target</div>
+                <div style="font-size:12px;color:var(--gray-500);">Mass Retail · Tier 2</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-outline btn-sm">Edit</button>
+              <button class="btn btn-outline btn-sm">Assign</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">5</div>
+              <div style="font-size:11px;color:var(--gray-500);">Modules</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">2</div>
+              <div style="font-size:11px;color:var(--gray-500);">Assigned Reps</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--success);">1</div>
+              <div style="font-size:11px;color:var(--gray-500);">Certified</div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Rep Progress</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#6366F1;">AJ</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Aisha J.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+            <span class="tag tag-success" style="font-size:9px;">Certified</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#4F46E5;">MK</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Maya K.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:20%;background:var(--danger);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--danger);">20%</span>
+          </div>
+        </div>
+
+        <!-- Kroger -->
+        <div class="card" style="border-top:4px solid #0068A8;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div style="width:48px;height:48px;border-radius:12px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:24px;">🛒</div>
+              <div>
+                <div style="font-size:18px;font-weight:700;">Kroger</div>
+                <div style="font-size:12px;color:var(--gray-500);">Grocery · Tier 2</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-outline btn-sm">Edit</button>
+              <button class="btn btn-outline btn-sm">Assign</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">5</div>
+              <div style="font-size:11px;color:var(--gray-500);">Modules</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--gray-800);">3</div>
+              <div style="font-size:11px;color:var(--gray-500);">Assigned Reps</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+              <div style="font-size:20px;font-weight:800;color:var(--success);">1</div>
+              <div style="font-size:11px;color:var(--gray-500);">Certified</div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Rep Progress</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#EC4899;">RC</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Raj C.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+            <span class="tag tag-success" style="font-size:9px;">Certified</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#F59E0B;">TW</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Tyler W.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:60%;background:var(--primary);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--primary);">60%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+            <div class="rep-avatar" style="width:28px;height:28px;font-size:10px;background:#10B981;">SM</div>
+            <div style="flex:1;font-size:13px;font-weight:600;">Sam M.</div>
+            <div class="progress-bar" style="width:80px;height:6px;"><div class="progress-fill" style="width:20%;background:var(--danger);"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--danger);">20%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certification Matrix -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏆 Outlet Certification Matrix</div>
+            <div class="card-subtitle">Which reps are certified for which outlets</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Export</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Rep</th>
+              <th style="text-align:center;">Walmart</th>
+              <th style="text-align:center;">Costco</th>
+              <th style="text-align:center;">Target</th>
+              <th style="text-align:center;">Kroger</th>
+              <th style="text-align:center;">CVS</th>
+              <th style="text-align:center;">Amazon</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#6366F1;width:28px;height:28px;font-size:10px;">AJ</div><div class="rep-name">Aisha Johnson</div></div></td>
+              <td style="text-align:center;"><span style="font-size:18px;">✅</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:18px;">✅</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#EC4899;width:28px;height:28px;font-size:10px;">RC</div><div class="rep-name">Raj Chopra</div></div></td>
+              <td style="text-align:center;"><span style="font-size:18px;">✅</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:18px;">✅</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#4F46E5;width:28px;height:28px;font-size:10px;">MK</div><div class="rep-name">Maya Kumar</div></div></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--primary);">75%</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--warning);">50%</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--danger);">20%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#F59E0B;width:28px;height:28px;font-size:10px;">TW</div><div class="rep-name">Tyler Wong</div></div></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--warning);">50%</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--danger);">33%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--primary);">60%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#10B981;width:28px;height:28px;font-size:10px;">SM</div><div class="rep-name">Sam Miller</div></div></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--danger);">16%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--danger);">20%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+            <tr>
+              <td><div class="rep-cell"><div class="rep-avatar" style="background:#8B5CF6;width:28px;height:28px;font-size:10px;">LP</div><div class="rep-name">Lisa Park</div></div></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:12px;font-weight:700;color:var(--danger);">0%</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+              <td style="text-align:center;"><span style="font-size:14px;color:var(--gray-300);">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: ASSESSMENTS ━━━━━━━━ -->
+    <div class="screen" id="screen-assessments">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div class="tab-pills" style="margin-bottom:0;">
+          <div class="tab-pill active">Upcoming</div>
+          <div class="tab-pill">Results</div>
+          <div class="tab-pill">Question Bank</div>
+        </div>
+        <button class="btn btn-primary">+ Create Assessment</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Scheduled Assessments</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Assessment</th>
+              <th>Type</th>
+              <th>Assigned To</th>
+              <th>Due Date</th>
+              <th>Completion</th>
+              <th>Avg Score</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Week 2: Prospecting & Outreach</strong></td>
+              <td><span class="tag tag-primary">Quiz + AI Roleplay</span></td>
+              <td>6 reps</td>
+              <td>Mar 14, 2026</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:33%;background:var(--warning);"></div></div>
+                  <span style="font-size:12px;">2 of 6</span>
+                </div>
+              </td>
+              <td><strong>82%</strong></td>
+              <td><button class="btn btn-outline btn-sm">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>Foundation Certification Exam</strong></td>
+              <td><span class="tag tag-info">Certification</span></td>
+              <td>2 reps (pending)</td>
+              <td>Mar 21, 2026</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:0%;background:var(--gray-300);"></div></div>
+                  <span style="font-size:12px;">Not started</span>
+                </div>
+              </td>
+              <td>—</td>
+              <td><button class="btn btn-outline btn-sm">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>Week 3: Handling Conversations</strong></td>
+              <td><span class="tag tag-ai">AI Scenario-Based</span></td>
+              <td>4 reps</td>
+              <td>Mar 28, 2026</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:0%;background:var(--gray-300);"></div></div>
+                  <span style="font-size:12px;">Not started</span>
+                </div>
+              </td>
+              <td>—</td>
+              <td><button class="btn btn-outline btn-sm">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ SCREEN: SETTINGS ━━━━━━━━ -->
+    <div class="screen" id="screen-settings">
+      <div class="tab-pills">
+        <div class="tab-pill active">General</div>
+        <div class="tab-pill">AI Coach Config</div>
+        <div class="tab-pill">Notifications</div>
+        <div class="tab-pill">Integrations</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Team Configuration</div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:13px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px;">Team Name</label>
+            <input value="Enterprise SaaS — West Region" style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:13px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px;">Default Learning Path</label>
+            <select style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;background:white;">
+              <option>New Rep Onboarding — Enterprise SaaS</option>
+              <option>Mid-Market Fast Track</option>
+              <option>Advanced Skills</option>
+            </select>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:13px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px;">Target Ramp Time</label>
+            <input value="5 weeks" style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;">
+          </div>
+          <button class="btn btn-primary" style="margin-top:8px;">Save Changes</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">🤖 AI Coach Settings</div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--gray-100);">
+              <div>
+                <div style="font-weight:600;font-size:14px;">Real-time coaching tips</div>
+                <div style="font-size:12px;color:var(--gray-500);">Show AI hints during roleplay sessions</div>
+              </div>
+              <div style="width:44px;height:24px;background:var(--success);border-radius:12px;position:relative;cursor:pointer;">
+                <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:var(--shadow);"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--gray-100);">
+              <div>
+                <div style="font-weight:600;font-size:14px;">Adaptive difficulty</div>
+                <div style="font-size:12px;color:var(--gray-500);">Auto-adjust scenario difficulty based on performance</div>
+              </div>
+              <div style="width:44px;height:24px;background:var(--success);border-radius:12px;position:relative;cursor:pointer;">
+                <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:var(--shadow);"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--gray-100);">
+              <div>
+                <div style="font-weight:600;font-size:14px;">Weekly AI digest emails</div>
+                <div style="font-size:12px;color:var(--gray-500);">Send manager weekly AI performance summary</div>
+              </div>
+              <div style="width:44px;height:24px;background:var(--success);border-radius:12px;position:relative;cursor:pointer;">
+                <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:var(--shadow);"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+              <div>
+                <div style="font-weight:600;font-size:14px;">Auto-assign practice</div>
+                <div style="font-size:12px;color:var(--gray-500);">AI auto-assigns practice sessions for weak areas</div>
+              </div>
+              <div style="width:44px;height:24px;background:var(--gray-300);border-radius:12px;position:relative;cursor:pointer;">
+                <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:var(--shadow);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-area -->
+
+<script>
+const pageTitles = {
+  'overview': 'Team Dashboard',
+  'reps': 'Rep Detail — Maya Kumar',
+  'ai-analytics': 'AI Coaching Analytics',
+  'paths-mgr': 'Learning Paths',
+  'content': 'Content Library',
+  'outlets-mgr': 'Outlet Trainings',
+  'assessments': 'Assessments',
+  'settings': 'Settings'
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  event.currentTarget && event.currentTarget.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || 'Dashboard';
+  window.scrollTo(0, 0);
+}
+
+function showRepDetail(rep) {
+  showScreen('reps');
+  // Update nav
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-link')[1].classList.add('active');
+  document.getElementById('page-title').textContent = 'Rep Detail — Maya Kumar';
+}
+
+// Nav link clicks
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
