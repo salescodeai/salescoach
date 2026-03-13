@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesCoach - Travel Expense Wireframes</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #1f2937;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+        .btn {
+            display: block;
+            background-color: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-manager {
+            background-color: #10b981;
+        }
+        .btn-manager:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SalesCoach Wireframes</h1>
+        <p>Travel Expense Module Prototypes</p>
+        
+        <a href="salesrep-app.html" class="btn">📱 Sales Rep Mobile View</a>
+        
+        <a href="manager-dashboard.html" class="btn btn-manager">💻 Manager Web Dashboard</a>
+    </div>
+</body>
+</html>
